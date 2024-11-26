@@ -1,0 +1,17 @@
+syntax = "proto3";
+package optio.optio;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "optio/optio/params.proto";
+
+option go_package = "github.com/OptioServices/optio/x/optio/types";
+
+// GenesisState defines the optio module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
