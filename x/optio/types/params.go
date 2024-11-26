@@ -11,7 +11,7 @@ var _ paramtypes.ParamSet = (*Params)(nil)
 
 var (
 	KeyAuthorizedAccounts              = []byte("AuthorizedAccounts")
-	DefaultAuthorizedAccounts []string = []string{""}
+	DefaultAuthorizedAccounts []string = []string{}
 )
 
 var (
@@ -21,7 +21,7 @@ var (
 
 var (
 	KeyMaxSupply            = []byte("MaxSupply")
-	DefaultMaxSupply uint64 = 0
+	DefaultMaxSupply uint64 = 30000000000000000
 )
 
 // ParamKeyTable the param key table for launch module
@@ -84,10 +84,12 @@ func validateAuthorizedAccounts(v interface{}) error {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
 
-	for _, account := range authorizedAccounts {
-		_, err := sdk.AccAddressFromBech32(account)
-		if err != nil {
-			return fmt.Errorf("invalid account address: %s", account)
+	if len(authorizedAccounts) != 0 {
+		for _, account := range authorizedAccounts {
+			_, err := sdk.AccAddressFromBech32(account)
+			if err != nil {
+				return fmt.Errorf("invalid account address: %s", account)
+			}
 		}
 	}
 
