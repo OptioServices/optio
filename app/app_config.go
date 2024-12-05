@@ -3,6 +3,10 @@ package app
 import (
 	"time"
 
+	optiomodulev1 "github.com/OptioServices/optio/api/optio/optio/module"
+	_ "github.com/OptioServices/optio/x/optio/module" // import for side-effects
+	optiomoduletypes "github.com/OptioServices/optio/x/optio/types"
+
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
 	appv1alpha1 "cosmossdk.io/api/cosmos/app/v1alpha1"
 	authmodulev1 "cosmossdk.io/api/cosmos/auth/module/v1"
@@ -31,9 +35,6 @@ import (
 	"cosmossdk.io/x/feegrant"
 	"cosmossdk.io/x/nft"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
-	optiomodulev1 "github.com/OptioServices/optio/api/optio/optio/module"
-	_ "github.com/OptioServices/optio/x/optio/module" // import for side-effects
-	optiomoduletypes "github.com/OptioServices/optio/x/optio/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
