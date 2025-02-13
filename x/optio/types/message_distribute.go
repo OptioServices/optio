@@ -8,18 +8,18 @@ import (
 
 var _ sdk.Msg = &MsgDistribute{}
 
-func NewMsgDistribute(creator string, amount uint64, recipients []*Recipient) *MsgDistribute {
+func NewMsgDistribute(fromAddress string, amount uint64, recipients []*Recipient) *MsgDistribute {
 	return &MsgDistribute{
-		Creator:    creator,
-		Amount:     amount,
-		Recipients: recipients,
+		FromAddress: fromAddress,
+		Amount:      amount,
+		Recipients:  recipients,
 	}
 }
 
 func (msg *MsgDistribute) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
 	if err != nil {
-		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid fromAddress (%s)", err)
 	}
 
 	if msg.Amount == 0 {

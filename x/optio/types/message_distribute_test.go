@@ -17,13 +17,13 @@ func TestMsgDistribute_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgDistribute{
-				Creator: "invalid_address",
+				FromAddress: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgDistribute{
-				Creator: sample.AccAddress(),
+				FromAddress: sample.AccAddress(),
 			},
 		},
 	}

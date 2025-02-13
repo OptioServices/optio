@@ -13,7 +13,7 @@ import (
 func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (*types.MsgDistributeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	authorized := k.IsAuthorized(ctx, msg.Creator)
+	authorized := k.IsAuthorized(ctx, msg.FromAddress)
 	if !authorized {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrUnauthorized, "Unauthorized sender")
 	}

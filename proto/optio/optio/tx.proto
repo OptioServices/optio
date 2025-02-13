@@ -39,10 +39,10 @@ message MsgUpdateParams {
 message MsgUpdateParamsResponse {}
 
 message MsgDistribute {
-  option (cosmos.msg.v1.signer) = "creator";
+  option (cosmos.msg.v1.signer) = "from_address";
   option           (amino.name) = "optio/x/optio/MsgDistribute";
 
-  string creator = 1;
+  string from_address = 1;
   uint64 amount = 2;
   repeated Recipient recipients = 3;
 }

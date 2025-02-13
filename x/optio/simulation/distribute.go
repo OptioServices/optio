@@ -19,7 +19,7 @@ func SimulateMsgDistribute(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		simAccount, _ := simtypes.RandomAcc(r, accs)
 		msg := &types.MsgDistribute{
-			Creator: simAccount.Address.String(),
+			FromAddress: simAccount.Address.String(),
 		}
 
 		// TODO: Handling the Distribute simulation
