@@ -75,7 +75,7 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
-	optiomodulekeeper "github.com/OptioServices/optio/x/optio/keeper"
+	optiomodulekeeper "github.com/OptioServices/optio/x/distribute/keeper"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	"github.com/OptioServices/optio/docs"

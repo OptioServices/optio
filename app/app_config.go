@@ -3,9 +3,9 @@ package app
 import (
 	"time"
 
-	optiomodulev1 "github.com/OptioServices/optio/api/optio/optio/module"
-	_ "github.com/OptioServices/optio/x/optio/module" // import for side-effects
-	optiomoduletypes "github.com/OptioServices/optio/x/optio/types"
+	distributemodulev1 "github.com/OptioServices/optio/api/optio/distribute/module"
+	_ "github.com/OptioServices/optio/x/distribute/module" // import for side-effects
+	distributemoduletypes "github.com/OptioServices/optio/x/distribute/types"
 
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
 	appv1alpha1 "cosmossdk.io/api/cosmos/app/v1alpha1"
@@ -93,7 +93,7 @@ var (
 		consensustypes.ModuleName,
 		circuittypes.ModuleName,
 		// chain modules
-		optiomoduletypes.ModuleName,
+		distributemoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 
@@ -118,7 +118,7 @@ var (
 		icatypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		// chain modules
-		optiomoduletypes.ModuleName,
+		distributemoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	}
 
@@ -137,7 +137,7 @@ var (
 		icatypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		// chain modules
-		optiomoduletypes.ModuleName,
+		distributemoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	}
 
@@ -158,7 +158,7 @@ var (
 		{Account: ibctransfertypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
 		{Account: ibcfeetypes.ModuleName},
 		{Account: icatypes.ModuleName},
-		{Account: optiomoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}},
+		{Account: distributemoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 
@@ -295,8 +295,8 @@ var (
 				Config: appconfig.WrapAny(&circuitmodulev1.Module{}),
 			},
 			{
-				Name:   optiomoduletypes.ModuleName,
-				Config: appconfig.WrapAny(&optiomodulev1.Module{}),
+				Name:   distributemoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&distributemodulev1.Module{}),
 			},
 			// this line is used by starport scaffolding # stargate/app/moduleConfig
 		},
