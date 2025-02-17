@@ -11,12 +11,12 @@ var _ paramtypes.ParamSet = (*Params)(nil)
 
 var (
 	KeyAuthorizedAccounts              = []byte("AuthorizedAccounts")
-	DefaultAuthorizedAccounts []string = []string{}
+	DefaultAuthorizedAccounts []string = []string{"optio13zj88zcylclhevtsztx0kdgf9a5zyskt4utffh"}
 )
 
 var (
 	KeyDenom            = []byte("Denom")
-	DefaultDenom string = "denom"
+	DefaultDenom string = "uOPT"
 )
 
 var (

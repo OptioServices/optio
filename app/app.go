@@ -1,7 +1,10 @@
 package app
 
 import (
+	"errors"
+	"fmt"
 	"io"
+	"os"
 
 	_ "cosmossdk.io/api/cosmos/tx/config/v1" // import for side-effects
 	clienthelpers "cosmossdk.io/client/v2/helpers"
@@ -75,7 +78,12 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
+	"github.com/OptioServices/optio/app/upgrades"
 	optiomodulekeeper "github.com/OptioServices/optio/x/distribute/keeper"
+
+	upgradetypes "cosmossdk.io/x/upgrade/types"
+	v2 "github.com/OptioServices/optio/app/upgrades/v2"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	"github.com/OptioServices/optio/docs"
@@ -94,6 +102,10 @@ var (
 var (
 	_ runtime.AppI            = (*App)(nil)
 	_ servertypes.Application = (*App)(nil)
+)
+
+var (
+	Upgrades = []upgrades.Upgrade{v2.Upgrade}
 )
 
 // App extends an ABCI application, but with most of its parameters exported.
@@ -290,11 +302,48 @@ func New(
 		return app.App.InitChainer(ctx, req)
 	})
 
+	app.setupUpgradeHandlers()
+	app.setupUpgradeStoreLoaders()
+
 	if err := app.Load(loadLatest); err != nil {
 		return nil, err
 	}
 
 	return app, nil
+}
+
+func (app *App) setupUpgradeStoreLoaders() {
+	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+	if err != nil {
+		// Don't panic if we're starting from genesis
+		if !errors.Is(err, os.ErrNotExist) {
+			panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
+		}
+		return
+	}
+
+	if app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		return
+	}
+
+	for _, upgrade := range Upgrades {
+		if upgradeInfo.Name == upgrade.UpgradeName {
+			storeUpgrades := upgrade.StoreUpgrades
+			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
+		}
+	}
+}
+
+func (app *App) setupUpgradeHandlers() {
+	for _, upgrade := range Upgrades {
+		app.UpgradeKeeper.SetUpgradeHandler(
+			upgrade.UpgradeName,
+			upgrade.CreateUpgradeHandler(
+				app.ModuleManager,
+				app.Configurator(),
+			),
+		)
+	}
 }
 
 // LegacyAmino returns App's amino codec.
