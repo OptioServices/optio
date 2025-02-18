@@ -30,7 +30,7 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 
 	distributionStartDate, err := time.Parse("2006/01/02", params.DistributionStartDate)
 	if err != nil {
-		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "Invalid distribution start date")
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution start date. expected format: YYYY/MM/DD")
 	}
 
 	distributionTotals := k.GetAllDailyDistributionTotal(ctx)
@@ -38,10 +38,15 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 	for _, recipientDistribution := range msg.Recipients {
 		distributionDate, err := time.Parse("2006/01/02", recipientDistribution.DistributionDate)
 		if err != nil {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "Invalid distribution date")
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution date. expected format: YYYY/MM/DD")
 		}
 		if distributionDate.Before(distributionStartDate) {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "Distribution date is before start date")
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date is before start date")
+		}
+
+		today := time.Now().Truncate(0)
+		if distributionDate.After(today) {
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date is in the future")
 		}
 
 		// Initialize or add to the total for this date
@@ -53,10 +58,14 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 
 	// check if recipient distribution totals will exceed daily limits
 	for date, total := range recipientDistributionTotals {
+		dailyLimit := calculateDailyLimit(date, params)
 		if currentTotal, ok := distributionTotals[date]; ok {
-			dailyLimit := calculateDailyLimit(date, params)
 			if total+currentTotal > dailyLimit {
-				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "Distribution date '%s' total will exceed daily limit", date)
+				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date '%s' total will exceed daily limit", date)
+			}
+		} else {
+			if total > dailyLimit {
+				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date '%s' total will exceed daily limit", date)
 			}
 		}
 	}
@@ -64,19 +73,19 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 	coin := sdk.NewCoin(params.Denom, math.NewIntFromUint64(msg.Amount))
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(coin))
 	if err != nil {
-		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "Minting coins failed")
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "minting coins failed")
 	}
 
 	for _, recipient := range msg.Recipients {
 		acct, err := sdk.AccAddressFromBech32(recipient.Address)
 		if err != nil {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid recipient address")
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid recipient address")
 		}
 
 		coins := sdk.NewCoins(sdk.NewCoin(params.Denom, math.NewIntFromUint64(recipient.Amount)))
 		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, acct, coins)
 		if err != nil {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "Sending coins failed")
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "sending coins failed")
 		}
 	}
 
@@ -104,6 +113,10 @@ func calculateDailyLimit(date string, params types.Params) uint64 {
 	for startDate.Before(currentDate) {
 		startDate = startDate.AddDate(0, 1, 0) // Move to the next month
 		months++
+	}
+
+	if months == 0 {
+		months = 1
 	}
 
 	halvingPeriod := int(gomath.Ceil(float64(months) / float64(params.MonthsInHalvingPeriod)))

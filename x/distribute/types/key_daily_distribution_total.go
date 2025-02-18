@@ -17,7 +17,6 @@ func DailyDistributionTotalKey(
 
 	dateBytes := []byte(date)
 	key = append(key, dateBytes...)
-	key = append(key, []byte("/")...)
 
 	return key
 }

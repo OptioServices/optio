@@ -2,8 +2,6 @@ package keeper
 
 import (
 	"context"
-	"encoding/binary"
-	"fmt"
 	"strconv"
 
 	"cosmossdk.io/store/prefix"
@@ -69,10 +67,10 @@ func (k Keeper) GetAllDailyDistributionTotal(ctx context.Context) map[string]uin
 
 	for ; iterator.Valid(); iterator.Next() {
 		value := iterator.Value()
-		if len(value) != 8 {
-			panic(fmt.Errorf("invalid value length for uint64: %d", len(value)))
+		val, err := strconv.ParseUint(string(value), 10, 64)
+		if err != nil {
+			return nil
 		}
-		val := binary.BigEndian.Uint64(value)
 		totalMap[string(iterator.Key())] = val
 	}
 
