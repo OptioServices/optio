@@ -79,7 +79,7 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
 	"github.com/OptioServices/optio/app/upgrades"
-	optiomodulekeeper "github.com/OptioServices/optio/x/distribute/keeper"
+	distributemodulekeeper "github.com/OptioServices/optio/x/distribute/keeper"
 
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	v2 "github.com/OptioServices/optio/app/upgrades/v2"
@@ -153,7 +153,7 @@ type App struct {
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 	ScopedKeepers             map[string]capabilitykeeper.ScopedKeeper
 
-	OptioKeeper optiomodulekeeper.Keeper
+	DistributeKeeper distributemodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// simulation manager
@@ -257,7 +257,7 @@ func New(
 		&app.NFTKeeper,
 		&app.GroupKeeper,
 		&app.CircuitBreakerKeeper,
-		&app.OptioKeeper,
+		&app.DistributeKeeper,
 		// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	); err != nil {
 		panic(err)

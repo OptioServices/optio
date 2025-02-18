@@ -9,13 +9,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/OptioServices/optio/testutil/sample"
-	optiosimulation "github.com/OptioServices/optio/x/distribute/simulation"
+	distributesimulation "github.com/OptioServices/optio/x/distribute/simulation"
 	"github.com/OptioServices/optio/x/distribute/types"
 )
 
 // avoid unused import issue
 var (
-	_ = optiosimulation.FindAccount
+	_ = distributesimulation.FindAccount
 	_ = rand.Rand{}
 	_ = sample.AccAddress
 	_ = sdk.AccAddress{}
@@ -36,11 +36,11 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	for i, acc := range simState.Accounts {
 		accs[i] = acc.Address.String()
 	}
-	optioGenesis := types.GenesisState{
+	distributeGenesis := types.GenesisState{
 		Params: types.DefaultParams(),
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
-	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&optioGenesis)
+	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&distributeGenesis)
 }
 
 // RegisterStoreDecoder registers a decoder.
@@ -58,7 +58,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgDistribute,
-		optiosimulation.SimulateMsgDistribute(am.accountKeeper, am.bankKeeper, am.keeper),
+		distributesimulation.SimulateMsgDistribute(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
@@ -73,7 +73,7 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			opWeightMsgDistribute,
 			defaultWeightMsgDistribute,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
-				optiosimulation.SimulateMsgDistribute(am.accountKeeper, am.bankKeeper, am.keeper)
+				distributesimulation.SimulateMsgDistribute(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),
