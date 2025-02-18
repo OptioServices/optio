@@ -2,17 +2,17 @@ package types
 
 const (
 	// ModuleName defines the module name
-	ModuleName = "optio"
+	ModuleName = "distribute"
 
 	// StoreKey defines the primary module store key
 	StoreKey = ModuleName
 
 	// MemStoreKey defines the in-memory store key
-	MemStoreKey = "mem_optio"
+	MemStoreKey = "mem_distribute"
 )
 
 var (
-	ParamsKey = []byte("p_optio")
+	ParamsKey = []byte("p_distribute")
 )
 
 func KeyPrefix(p string) []byte {
