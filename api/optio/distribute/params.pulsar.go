@@ -61,10 +61,13 @@ func (x *_Params_1_list) IsValid() bool {
 }
 
 var (
-	md_Params                    protoreflect.MessageDescriptor
-	fd_Params_authorizedAccounts protoreflect.FieldDescriptor
-	fd_Params_denom              protoreflect.FieldDescriptor
-	fd_Params_maxSupply          protoreflect.FieldDescriptor
+	md_Params                             protoreflect.MessageDescriptor
+	fd_Params_authorizedAccounts          protoreflect.FieldDescriptor
+	fd_Params_denom                       protoreflect.FieldDescriptor
+	fd_Params_maxSupply                   protoreflect.FieldDescriptor
+	fd_Params_distributionStartDate       protoreflect.FieldDescriptor
+	fd_Params_monthsInHalvingPeriod       protoreflect.FieldDescriptor
+	fd_Params_distributionSignerPublicKey protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -73,6 +76,9 @@ func init() {
 	fd_Params_authorizedAccounts = md_Params.Fields().ByName("authorizedAccounts")
 	fd_Params_denom = md_Params.Fields().ByName("denom")
 	fd_Params_maxSupply = md_Params.Fields().ByName("maxSupply")
+	fd_Params_distributionStartDate = md_Params.Fields().ByName("distributionStartDate")
+	fd_Params_monthsInHalvingPeriod = md_Params.Fields().ByName("monthsInHalvingPeriod")
+	fd_Params_distributionSignerPublicKey = md_Params.Fields().ByName("distributionSignerPublicKey")
 }
 
 var _ protoreflect.Message = (*fastReflection_Params)(nil)
@@ -158,6 +164,24 @@ func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, proto
 			return
 		}
 	}
+	if x.DistributionStartDate != "" {
+		value := protoreflect.ValueOfString(x.DistributionStartDate)
+		if !f(fd_Params_distributionStartDate, value) {
+			return
+		}
+	}
+	if x.MonthsInHalvingPeriod != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.MonthsInHalvingPeriod)
+		if !f(fd_Params_monthsInHalvingPeriod, value) {
+			return
+		}
+	}
+	if x.DistributionSignerPublicKey != "" {
+		value := protoreflect.ValueOfString(x.DistributionSignerPublicKey)
+		if !f(fd_Params_distributionSignerPublicKey, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -179,6 +203,12 @@ func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 		return x.Denom != ""
 	case "optio.distribute.Params.maxSupply":
 		return x.MaxSupply != uint64(0)
+	case "optio.distribute.Params.distributionStartDate":
+		return x.DistributionStartDate != ""
+	case "optio.distribute.Params.monthsInHalvingPeriod":
+		return x.MonthsInHalvingPeriod != uint64(0)
+	case "optio.distribute.Params.distributionSignerPublicKey":
+		return x.DistributionSignerPublicKey != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.Params"))
@@ -201,6 +231,12 @@ func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 		x.Denom = ""
 	case "optio.distribute.Params.maxSupply":
 		x.MaxSupply = uint64(0)
+	case "optio.distribute.Params.distributionStartDate":
+		x.DistributionStartDate = ""
+	case "optio.distribute.Params.monthsInHalvingPeriod":
+		x.MonthsInHalvingPeriod = uint64(0)
+	case "optio.distribute.Params.distributionSignerPublicKey":
+		x.DistributionSignerPublicKey = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.Params"))
@@ -229,6 +265,15 @@ func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) pro
 	case "optio.distribute.Params.maxSupply":
 		value := x.MaxSupply
 		return protoreflect.ValueOfUint64(value)
+	case "optio.distribute.Params.distributionStartDate":
+		value := x.DistributionStartDate
+		return protoreflect.ValueOfString(value)
+	case "optio.distribute.Params.monthsInHalvingPeriod":
+		value := x.MonthsInHalvingPeriod
+		return protoreflect.ValueOfUint64(value)
+	case "optio.distribute.Params.distributionSignerPublicKey":
+		value := x.DistributionSignerPublicKey
+		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.Params"))
@@ -257,6 +302,12 @@ func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value proto
 		x.Denom = value.Interface().(string)
 	case "optio.distribute.Params.maxSupply":
 		x.MaxSupply = value.Uint()
+	case "optio.distribute.Params.distributionStartDate":
+		x.DistributionStartDate = value.Interface().(string)
+	case "optio.distribute.Params.monthsInHalvingPeriod":
+		x.MonthsInHalvingPeriod = value.Uint()
+	case "optio.distribute.Params.distributionSignerPublicKey":
+		x.DistributionSignerPublicKey = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.Params"))
@@ -287,6 +338,12 @@ func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protore
 		panic(fmt.Errorf("field denom of message optio.distribute.Params is not mutable"))
 	case "optio.distribute.Params.maxSupply":
 		panic(fmt.Errorf("field maxSupply of message optio.distribute.Params is not mutable"))
+	case "optio.distribute.Params.distributionStartDate":
+		panic(fmt.Errorf("field distributionStartDate of message optio.distribute.Params is not mutable"))
+	case "optio.distribute.Params.monthsInHalvingPeriod":
+		panic(fmt.Errorf("field monthsInHalvingPeriod of message optio.distribute.Params is not mutable"))
+	case "optio.distribute.Params.distributionSignerPublicKey":
+		panic(fmt.Errorf("field distributionSignerPublicKey of message optio.distribute.Params is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.Params"))
@@ -307,6 +364,12 @@ func (x *fastReflection_Params) NewField(fd protoreflect.FieldDescriptor) protor
 		return protoreflect.ValueOfString("")
 	case "optio.distribute.Params.maxSupply":
 		return protoreflect.ValueOfUint64(uint64(0))
+	case "optio.distribute.Params.distributionStartDate":
+		return protoreflect.ValueOfString("")
+	case "optio.distribute.Params.monthsInHalvingPeriod":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "optio.distribute.Params.distributionSignerPublicKey":
+		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.Params"))
@@ -389,6 +452,17 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		if x.MaxSupply != 0 {
 			n += 1 + runtime.Sov(uint64(x.MaxSupply))
 		}
+		l = len(x.DistributionStartDate)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.MonthsInHalvingPeriod != 0 {
+			n += 1 + runtime.Sov(uint64(x.MonthsInHalvingPeriod))
+		}
+		l = len(x.DistributionSignerPublicKey)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -417,6 +491,25 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.DistributionSignerPublicKey) > 0 {
+			i -= len(x.DistributionSignerPublicKey)
+			copy(dAtA[i:], x.DistributionSignerPublicKey)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.DistributionSignerPublicKey)))
+			i--
+			dAtA[i] = 0x32
+		}
+		if x.MonthsInHalvingPeriod != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.MonthsInHalvingPeriod))
+			i--
+			dAtA[i] = 0x28
+		}
+		if len(x.DistributionStartDate) > 0 {
+			i -= len(x.DistributionStartDate)
+			copy(dAtA[i:], x.DistributionStartDate)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.DistributionStartDate)))
+			i--
+			dAtA[i] = 0x22
 		}
 		if x.MaxSupply != 0 {
 			i = runtime.EncodeVarint(dAtA, i, uint64(x.MaxSupply))
@@ -571,6 +664,89 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 						break
 					}
 				}
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field DistributionStartDate", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.DistributionStartDate = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 5:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MonthsInHalvingPeriod", wireType)
+				}
+				x.MonthsInHalvingPeriod = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.MonthsInHalvingPeriod |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 6:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field DistributionSignerPublicKey", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.DistributionSignerPublicKey = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -625,9 +801,12 @@ type Params struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AuthorizedAccounts []string `protobuf:"bytes,1,rep,name=authorizedAccounts,proto3" json:"authorizedAccounts,omitempty"`
-	Denom              string   `protobuf:"bytes,2,opt,name=denom,proto3" json:"denom,omitempty"`
-	MaxSupply          uint64   `protobuf:"varint,3,opt,name=maxSupply,proto3" json:"maxSupply,omitempty"`
+	AuthorizedAccounts          []string `protobuf:"bytes,1,rep,name=authorizedAccounts,proto3" json:"authorizedAccounts,omitempty"`
+	Denom                       string   `protobuf:"bytes,2,opt,name=denom,proto3" json:"denom,omitempty"`
+	MaxSupply                   uint64   `protobuf:"varint,3,opt,name=maxSupply,proto3" json:"maxSupply,omitempty"`
+	DistributionStartDate       string   `protobuf:"bytes,4,opt,name=distributionStartDate,proto3" json:"distributionStartDate,omitempty"`
+	MonthsInHalvingPeriod       uint64   `protobuf:"varint,5,opt,name=monthsInHalvingPeriod,proto3" json:"monthsInHalvingPeriod,omitempty"`
+	DistributionSignerPublicKey string   `protobuf:"bytes,6,opt,name=distributionSignerPublicKey,proto3" json:"distributionSignerPublicKey,omitempty"`
 }
 
 func (x *Params) Reset() {
@@ -671,6 +850,27 @@ func (x *Params) GetMaxSupply() uint64 {
 	return 0
 }
 
+func (x *Params) GetDistributionStartDate() string {
+	if x != nil {
+		return x.DistributionStartDate
+	}
+	return ""
+}
+
+func (x *Params) GetMonthsInHalvingPeriod() uint64 {
+	if x != nil {
+		return x.MonthsInHalvingPeriod
+	}
+	return 0
+}
+
+func (x *Params) GetDistributionSignerPublicKey() string {
+	if x != nil {
+		return x.DistributionSignerPublicKey
+	}
+	return ""
+}
+
 var File_optio_distribute_params_proto protoreflect.FileDescriptor
 
 var file_optio_distribute_params_proto_rawDesc = []byte{
@@ -679,7 +879,7 @@ var file_optio_distribute_params_proto_rawDesc = []byte{
 	0x10, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2e, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74,
 	0x65, 0x1a, 0x11, 0x61, 0x6d, 0x69, 0x6e, 0x6f, 0x2f, 0x61, 0x6d, 0x69, 0x6e, 0x6f, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f,
-	0x67, 0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xd9, 0x01, 0x0a, 0x06, 0x50,
+	0x67, 0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xfb, 0x03, 0x0a, 0x06, 0x50,
 	0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x4e, 0x0a, 0x12, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69,
 	0x7a, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28,
 	0x09, 0x42, 0x1e, 0xf2, 0xde, 0x1f, 0x1a, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x61, 0x75, 0x74,
@@ -691,21 +891,39 @@ var file_optio_distribute_params_proto_rawDesc = []byte{
 	0x09, 0x6d, 0x61, 0x78, 0x53, 0x75, 0x70, 0x70, 0x6c, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04,
 	0x42, 0x15, 0xf2, 0xde, 0x1f, 0x11, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x61, 0x78, 0x5f,
 	0x73, 0x75, 0x70, 0x70, 0x6c, 0x79, 0x22, 0x52, 0x09, 0x6d, 0x61, 0x78, 0x53, 0x75, 0x70, 0x70,
-	0x6c, 0x79, 0x3a, 0x22, 0xe8, 0xa0, 0x1f, 0x01, 0x8a, 0xe7, 0xb0, 0x2a, 0x19, 0x6f, 0x70, 0x74,
-	0x69, 0x6f, 0x2f, 0x78, 0x2f, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x2f,
-	0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0xb9, 0x01, 0x0a, 0x14, 0x63, 0x6f, 0x6d, 0x2e, 0x6f,
-	0x70, 0x74, 0x69, 0x6f, 0x2e, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x42,
-	0x0b, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x33,
-	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x4f, 0x70, 0x74, 0x69, 0x6f,
-	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x61,
-	0x70, 0x69, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62,
-	0x75, 0x74, 0x65, 0xa2, 0x02, 0x03, 0x4f, 0x44, 0x58, 0xaa, 0x02, 0x10, 0x4f, 0x70, 0x74, 0x69,
-	0x6f, 0x2e, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0xca, 0x02, 0x10, 0x4f,
-	0x70, 0x74, 0x69, 0x6f, 0x5c, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0xe2,
-	0x02, 0x1c, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x5c, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75,
-	0x74, 0x65, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02,
-	0x11, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x3a, 0x3a, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75,
-	0x74, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6c, 0x79, 0x12, 0x58, 0x0a, 0x15, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69,
+	0x6f, 0x6e, 0x53, 0x74, 0x61, 0x72, 0x74, 0x44, 0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x09, 0x42, 0x22, 0xf2, 0xde, 0x1f, 0x1e, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x64, 0x69, 0x73,
+	0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f,
+	0x64, 0x61, 0x74, 0x65, 0x22, 0x52, 0x15, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74,
+	0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x72, 0x74, 0x44, 0x61, 0x74, 0x65, 0x12, 0x59, 0x0a, 0x15,
+	0x6d, 0x6f, 0x6e, 0x74, 0x68, 0x73, 0x49, 0x6e, 0x48, 0x61, 0x6c, 0x76, 0x69, 0x6e, 0x67, 0x50,
+	0x65, 0x72, 0x69, 0x6f, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x04, 0x42, 0x23, 0xf2, 0xde, 0x1f,
+	0x1f, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x6f, 0x6e, 0x74, 0x68, 0x73, 0x5f, 0x69, 0x6e,
+	0x5f, 0x68, 0x61, 0x6c, 0x76, 0x69, 0x6e, 0x67, 0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x22,
+	0x52, 0x15, 0x6d, 0x6f, 0x6e, 0x74, 0x68, 0x73, 0x49, 0x6e, 0x48, 0x61, 0x6c, 0x76, 0x69, 0x6e,
+	0x67, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x12, 0x6b, 0x0a, 0x1b, 0x64, 0x69, 0x73, 0x74, 0x72,
+	0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x50, 0x75, 0x62,
+	0x6c, 0x69, 0x63, 0x4b, 0x65, 0x79, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x42, 0x29, 0xf2, 0xde,
+	0x1f, 0x25, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75,
+	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x5f, 0x70, 0x75, 0x62, 0x6c,
+	0x69, 0x63, 0x5f, 0x6b, 0x65, 0x79, 0x22, 0x52, 0x1b, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62,
+	0x75, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x50, 0x75, 0x62, 0x6c, 0x69,
+	0x63, 0x4b, 0x65, 0x79, 0x3a, 0x22, 0xe8, 0xa0, 0x1f, 0x01, 0x8a, 0xe7, 0xb0, 0x2a, 0x19, 0x6f,
+	0x70, 0x74, 0x69, 0x6f, 0x2f, 0x78, 0x2f, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74,
+	0x65, 0x2f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0xb9, 0x01, 0x0a, 0x14, 0x63, 0x6f, 0x6d,
+	0x2e, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2e, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74,
+	0x65, 0x42, 0x0b, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01,
+	0x5a, 0x33, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x4f, 0x70, 0x74,
+	0x69, 0x6f, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f,
+	0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x64, 0x69, 0x73, 0x74, 0x72,
+	0x69, 0x62, 0x75, 0x74, 0x65, 0xa2, 0x02, 0x03, 0x4f, 0x44, 0x58, 0xaa, 0x02, 0x10, 0x4f, 0x70,
+	0x74, 0x69, 0x6f, 0x2e, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0xca, 0x02,
+	0x10, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x5c, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74,
+	0x65, 0xe2, 0x02, 0x1c, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x5c, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69,
+	0x62, 0x75, 0x74, 0x65, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61,
+	0xea, 0x02, 0x11, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x3a, 0x3a, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69,
+	0x62, 0x75, 0x74, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (

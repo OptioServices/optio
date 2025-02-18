@@ -17,6 +17,17 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:       "params",
 					Short:     "Shows the parameters of the module",
 				},
+				{
+					RpcMethod: "DailyDistributionTotalAll",
+					Use:       "list-daily-distribution-total",
+					Short:     "List all daily-distribution-total",
+				},
+				{
+					RpcMethod:      "DailyDistributionTotal",
+					Use:            "show-daily-distribution-total [id]",
+					Short:          "Shows a daily-distribution-total",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "date"}},
+				},
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},

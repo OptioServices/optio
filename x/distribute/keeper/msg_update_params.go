@@ -15,7 +15,16 @@ func (k msgServer) UpdateParams(goCtx context.Context, req *types.MsgUpdateParam
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	if err := k.SetParams(ctx, req.Params); err != nil {
+	updateParams := req.Params
+	currentParams := k.GetParams(ctx)
+
+	// DistributionStartDate, MonthsInHalvingPeriod, MaxSupply, Denom are not allowed to be changed
+	updateParams.DistributionStartDate = currentParams.DistributionStartDate
+	updateParams.MonthsInHalvingPeriod = currentParams.MonthsInHalvingPeriod
+	updateParams.MaxSupply = currentParams.MaxSupply
+	updateParams.Denom = currentParams.Denom
+
+	if err := k.SetParams(ctx, updateParams); err != nil {
 		return nil, err
 	}
 

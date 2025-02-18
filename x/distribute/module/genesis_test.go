@@ -14,6 +14,10 @@ func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
 
+		DailyDistributionTotals: map[string]uint64{
+			"2025-03-01": 1000000000,
+			"2025-03-02": 2000000000,
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -25,5 +29,6 @@ func TestGenesis(t *testing.T) {
 	nullify.Fill(&genesisState)
 	nullify.Fill(got)
 
+	require.ElementsMatch(t, genesisState.DailyDistributionTotals, got.DailyDistributionTotals)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

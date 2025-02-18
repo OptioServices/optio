@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -24,6 +25,16 @@ var (
 	DefaultMaxSupply uint64 = 30000000000000000
 )
 
+var (
+	KeyDistributionStartDate     = []byte("DistributionStartDate")
+	DefaultDistributionStartDate = "2024/09/15"
+)
+
+var (
+	KeyMonthsInHalvingPeriod            = []byte("MonthsInHalvingPeriod")
+	DefaultMonthsInHalvingPeriod uint64 = 12
+)
+
 // ParamKeyTable the param key table for launch module
 func ParamKeyTable() paramtypes.KeyTable {
 	return paramtypes.NewKeyTable().RegisterParamSet(&Params{})
@@ -34,11 +45,15 @@ func NewParams(
 	authorizedAccounts []string,
 	denom string,
 	maxSupply uint64,
+	distributionStartDate string,
+	monthsInHalvingPeriod uint64,
 ) Params {
 	return Params{
-		AuthorizedAccounts: authorizedAccounts,
-		Denom:              denom,
-		MaxSupply:          maxSupply,
+		AuthorizedAccounts:    authorizedAccounts,
+		Denom:                 denom,
+		MaxSupply:             maxSupply,
+		DistributionStartDate: distributionStartDate,
+		MonthsInHalvingPeriod: monthsInHalvingPeriod,
 	}
 }
 
@@ -48,6 +63,8 @@ func DefaultParams() Params {
 		DefaultAuthorizedAccounts,
 		DefaultDenom,
 		DefaultMaxSupply,
+		DefaultDistributionStartDate,
+		DefaultMonthsInHalvingPeriod,
 	)
 }
 
@@ -57,6 +74,8 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyAuthorizedAccounts, &p.AuthorizedAccounts, validateAuthorizedAccounts),
 		paramtypes.NewParamSetPair(KeyDenom, &p.Denom, validateDenom),
 		paramtypes.NewParamSetPair(KeyMaxSupply, &p.MaxSupply, validateMaxSupply),
+		paramtypes.NewParamSetPair(KeyDistributionStartDate, &p.DistributionStartDate, validateDistributionStartDate),
+		paramtypes.NewParamSetPair(KeyMonthsInHalvingPeriod, &p.MonthsInHalvingPeriod, validateMonthsInHalvingPeriod),
 	}
 }
 
@@ -71,6 +90,14 @@ func (p Params) Validate() error {
 	}
 
 	if err := validateMaxSupply(p.MaxSupply); err != nil {
+		return err
+	}
+
+	if err := validateDistributionStartDate(p.DistributionStartDate); err != nil {
+		return err
+	}
+
+	if err := validateMonthsInHalvingPeriod(p.MonthsInHalvingPeriod); err != nil {
 		return err
 	}
 
@@ -119,6 +146,36 @@ func validateMaxSupply(v interface{}) error {
 
 	if maxSupply <= 0 {
 		return fmt.Errorf("max supply must be positive")
+	}
+
+	return nil
+}
+
+func validateDistributionStartDate(v interface{}) error {
+	distributionStartDate, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+
+	if distributionStartDate == "" {
+		return fmt.Errorf("distribution start date cannot be empty")
+	}
+
+	if _, err := time.Parse("2006/01/02", distributionStartDate); err != nil {
+		return fmt.Errorf("invalid distribution start date format; expected yyyy/mm/dd, got %s", distributionStartDate)
+	}
+
+	return nil
+}
+
+func validateMonthsInHalvingPeriod(v interface{}) error {
+	monthsInHalvingPeriod, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+
+	if monthsInHalvingPeriod <= 0 {
+		return fmt.Errorf("months in halving period must be positive")
 	}
 
 	return nil

@@ -13,9 +13,11 @@ import (
 )
 
 var (
-	md_Recipient         protoreflect.MessageDescriptor
-	fd_Recipient_amount  protoreflect.FieldDescriptor
-	fd_Recipient_address protoreflect.FieldDescriptor
+	md_Recipient                  protoreflect.MessageDescriptor
+	fd_Recipient_amount           protoreflect.FieldDescriptor
+	fd_Recipient_address          protoreflect.FieldDescriptor
+	fd_Recipient_distributionDate protoreflect.FieldDescriptor
+	fd_Recipient_signature        protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -23,6 +25,8 @@ func init() {
 	md_Recipient = File_optio_distribute_recipient_proto.Messages().ByName("Recipient")
 	fd_Recipient_amount = md_Recipient.Fields().ByName("amount")
 	fd_Recipient_address = md_Recipient.Fields().ByName("address")
+	fd_Recipient_distributionDate = md_Recipient.Fields().ByName("distributionDate")
+	fd_Recipient_signature = md_Recipient.Fields().ByName("signature")
 }
 
 var _ protoreflect.Message = (*fastReflection_Recipient)(nil)
@@ -102,6 +106,18 @@ func (x *fastReflection_Recipient) Range(f func(protoreflect.FieldDescriptor, pr
 			return
 		}
 	}
+	if x.DistributionDate != "" {
+		value := protoreflect.ValueOfString(x.DistributionDate)
+		if !f(fd_Recipient_distributionDate, value) {
+			return
+		}
+	}
+	if x.Signature != "" {
+		value := protoreflect.ValueOfString(x.Signature)
+		if !f(fd_Recipient_signature, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -121,6 +137,10 @@ func (x *fastReflection_Recipient) Has(fd protoreflect.FieldDescriptor) bool {
 		return x.Amount != uint64(0)
 	case "optio.distribute.Recipient.address":
 		return x.Address != ""
+	case "optio.distribute.Recipient.distributionDate":
+		return x.DistributionDate != ""
+	case "optio.distribute.Recipient.signature":
+		return x.Signature != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.Recipient"))
@@ -141,6 +161,10 @@ func (x *fastReflection_Recipient) Clear(fd protoreflect.FieldDescriptor) {
 		x.Amount = uint64(0)
 	case "optio.distribute.Recipient.address":
 		x.Address = ""
+	case "optio.distribute.Recipient.distributionDate":
+		x.DistributionDate = ""
+	case "optio.distribute.Recipient.signature":
+		x.Signature = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.Recipient"))
@@ -162,6 +186,12 @@ func (x *fastReflection_Recipient) Get(descriptor protoreflect.FieldDescriptor) 
 		return protoreflect.ValueOfUint64(value)
 	case "optio.distribute.Recipient.address":
 		value := x.Address
+		return protoreflect.ValueOfString(value)
+	case "optio.distribute.Recipient.distributionDate":
+		value := x.DistributionDate
+		return protoreflect.ValueOfString(value)
+	case "optio.distribute.Recipient.signature":
+		value := x.Signature
 		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
@@ -187,6 +217,10 @@ func (x *fastReflection_Recipient) Set(fd protoreflect.FieldDescriptor, value pr
 		x.Amount = value.Uint()
 	case "optio.distribute.Recipient.address":
 		x.Address = value.Interface().(string)
+	case "optio.distribute.Recipient.distributionDate":
+		x.DistributionDate = value.Interface().(string)
+	case "optio.distribute.Recipient.signature":
+		x.Signature = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.Recipient"))
@@ -211,6 +245,10 @@ func (x *fastReflection_Recipient) Mutable(fd protoreflect.FieldDescriptor) prot
 		panic(fmt.Errorf("field amount of message optio.distribute.Recipient is not mutable"))
 	case "optio.distribute.Recipient.address":
 		panic(fmt.Errorf("field address of message optio.distribute.Recipient is not mutable"))
+	case "optio.distribute.Recipient.distributionDate":
+		panic(fmt.Errorf("field distributionDate of message optio.distribute.Recipient is not mutable"))
+	case "optio.distribute.Recipient.signature":
+		panic(fmt.Errorf("field signature of message optio.distribute.Recipient is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.Recipient"))
@@ -227,6 +265,10 @@ func (x *fastReflection_Recipient) NewField(fd protoreflect.FieldDescriptor) pro
 	case "optio.distribute.Recipient.amount":
 		return protoreflect.ValueOfUint64(uint64(0))
 	case "optio.distribute.Recipient.address":
+		return protoreflect.ValueOfString("")
+	case "optio.distribute.Recipient.distributionDate":
+		return protoreflect.ValueOfString("")
+	case "optio.distribute.Recipient.signature":
 		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
@@ -304,6 +346,14 @@ func (x *fastReflection_Recipient) ProtoMethods() *protoiface.Methods {
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
+		l = len(x.DistributionDate)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.Signature)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -332,6 +382,20 @@ func (x *fastReflection_Recipient) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.Signature) > 0 {
+			i -= len(x.Signature)
+			copy(dAtA[i:], x.Signature)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Signature)))
+			i--
+			dAtA[i] = 0x22
+		}
+		if len(x.DistributionDate) > 0 {
+			i -= len(x.DistributionDate)
+			copy(dAtA[i:], x.DistributionDate)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.DistributionDate)))
+			i--
+			dAtA[i] = 0x1a
 		}
 		if len(x.Address) > 0 {
 			i -= len(x.Address)
@@ -445,6 +509,70 @@ func (x *fastReflection_Recipient) ProtoMethods() *protoiface.Methods {
 				}
 				x.Address = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field DistributionDate", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.DistributionDate = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Signature", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Signature = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -498,8 +626,10 @@ type Recipient struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Amount  uint64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
-	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	Amount           uint64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
+	Address          string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	DistributionDate string `protobuf:"bytes,3,opt,name=distributionDate,proto3" json:"distributionDate,omitempty"`
+	Signature        string `protobuf:"bytes,4,opt,name=signature,proto3" json:"signature,omitempty"`
 }
 
 func (x *Recipient) Reset() {
@@ -536,29 +666,48 @@ func (x *Recipient) GetAddress() string {
 	return ""
 }
 
+func (x *Recipient) GetDistributionDate() string {
+	if x != nil {
+		return x.DistributionDate
+	}
+	return ""
+}
+
+func (x *Recipient) GetSignature() string {
+	if x != nil {
+		return x.Signature
+	}
+	return ""
+}
+
 var File_optio_distribute_recipient_proto protoreflect.FileDescriptor
 
 var file_optio_distribute_recipient_proto_rawDesc = []byte{
 	0x0a, 0x20, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75,
 	0x74, 0x65, 0x2f, 0x72, 0x65, 0x63, 0x69, 0x70, 0x69, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x12, 0x10, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2e, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69,
-	0x62, 0x75, 0x74, 0x65, 0x22, 0x3d, 0x0a, 0x09, 0x52, 0x65, 0x63, 0x69, 0x70, 0x69, 0x65, 0x6e,
-	0x74, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x04, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x64, 0x64,
-	0x72, 0x65, 0x73, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x64, 0x64, 0x72,
-	0x65, 0x73, 0x73, 0x42, 0xbc, 0x01, 0x0a, 0x14, 0x63, 0x6f, 0x6d, 0x2e, 0x6f, 0x70, 0x74, 0x69,
-	0x6f, 0x2e, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x42, 0x0e, 0x52, 0x65,
-	0x63, 0x69, 0x70, 0x69, 0x65, 0x6e, 0x74, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x33,
-	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x4f, 0x70, 0x74, 0x69, 0x6f,
-	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x61,
-	0x70, 0x69, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62,
-	0x75, 0x74, 0x65, 0xa2, 0x02, 0x03, 0x4f, 0x44, 0x58, 0xaa, 0x02, 0x10, 0x4f, 0x70, 0x74, 0x69,
-	0x6f, 0x2e, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0xca, 0x02, 0x10, 0x4f,
-	0x70, 0x74, 0x69, 0x6f, 0x5c, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0xe2,
-	0x02, 0x1c, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x5c, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75,
-	0x74, 0x65, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02,
-	0x11, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x3a, 0x3a, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75,
-	0x74, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x62, 0x75, 0x74, 0x65, 0x22, 0x87, 0x01, 0x0a, 0x09, 0x52, 0x65, 0x63, 0x69, 0x70, 0x69, 0x65,
+	0x6e, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x04, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x64,
+	0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x64, 0x64,
+	0x72, 0x65, 0x73, 0x73, 0x12, 0x2a, 0x0a, 0x10, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75,
+	0x74, 0x69, 0x6f, 0x6e, 0x44, 0x61, 0x74, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x10,
+	0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x44, 0x61, 0x74, 0x65,
+	0x12, 0x1c, 0x0a, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x42, 0xbc,
+	0x01, 0x0a, 0x14, 0x63, 0x6f, 0x6d, 0x2e, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2e, 0x64, 0x69, 0x73,
+	0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x42, 0x0e, 0x52, 0x65, 0x63, 0x69, 0x70, 0x69, 0x65,
+	0x6e, 0x74, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x33, 0x67, 0x69, 0x74, 0x68, 0x75,
+	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x53, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x73, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6f, 0x70,
+	0x74, 0x69, 0x6f, 0x2f, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0xa2, 0x02,
+	0x03, 0x4f, 0x44, 0x58, 0xaa, 0x02, 0x10, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x2e, 0x44, 0x69, 0x73,
+	0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0xca, 0x02, 0x10, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x5c,
+	0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0xe2, 0x02, 0x1c, 0x4f, 0x70, 0x74,
+	0x69, 0x6f, 0x5c, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x5c, 0x47, 0x50,
+	0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x11, 0x4f, 0x70, 0x74, 0x69,
+	0x6f, 0x3a, 0x3a, 0x44, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
