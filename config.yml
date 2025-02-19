@@ -20,3 +20,13 @@ genesis:
     staking:
       params:
         bond_denom: uOPT
+    gov:
+      params:
+        expedited_min_deposit:
+          - amount: "2000000"
+            denom: uOPT
+        expedited_voting_period: 119s
+        min_deposit:
+          - amount: "1000000"
+            denom: uOPT
+        voting_period: 120s
