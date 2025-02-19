@@ -1,22 +1,31 @@
 version: 1
 validation: sovereign
 accounts: 
+- name: distribute
+  coins:
+  - 1000000000uOPT
+  address: optio13zj88zcylclhevtsztx0kdgf9a5zyskt4utffh
 - name: alice
   coins:
-  - 20000token
-  - 200000000stake
-- name: bob
-  coins:
-  - 10000token
-  - 100000000stake
+  - 1000000000uOPT
 client:
   openapi:
     path: docs/static/openapi.yml
-faucet:
-  name: bob
-  coins:
-  - 5token
-  - 100000stake
 validators:
 - name: alice
-  bonded: 100000000stake
+  bonded: 5000000uOPT
+genesis:
+  app_state:
+    staking:
+      params:
+        bond_denom: uOPT
+    gov:
+      params:
+        expedited_min_deposit:
+          - amount: "2000000"
+            denom: uOPT
+        expedited_voting_period: 119s
+        min_deposit:
+          - amount: "1000000"
+            denom: uOPT
+        voting_period: 120s
