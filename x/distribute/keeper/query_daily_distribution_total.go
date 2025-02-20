@@ -2,8 +2,8 @@ package keeper
 
 import (
 	"context"
-	"encoding/binary"
 	"fmt"
+	"strconv"
 
 	"cosmossdk.io/store/prefix"
 	"github.com/OptioServices/optio/x/distribute/types"
@@ -18,16 +18,16 @@ func (k Keeper) DailyDistributionTotalAll(ctx context.Context, req *types.QueryA
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var dailyDistributionTotals map[string]uint64
+	dailyDistributionTotals := make(map[string]uint64)
 
 	store := runtime.KVStoreAdapter(k.storeService.OpenKVStore(ctx))
 	dailyDistributionTotalStore := prefix.NewStore(store, types.KeyPrefix(types.DailyDistributionTotalKeyPrefix))
 
 	pageRes, err := query.Paginate(dailyDistributionTotalStore, req.Pagination, func(key []byte, value []byte) error {
-		if len(value) != 8 {
-			return fmt.Errorf("invalid value length for uint64: %d", len(value))
+		val, err := strconv.ParseUint(string(value), 10, 64)
+		if err != nil {
+			return nil
 		}
-		val := binary.BigEndian.Uint64(value)
 
 		dailyDistributionTotals[string(key)] = val
 		return nil
@@ -37,7 +37,17 @@ func (k Keeper) DailyDistributionTotalAll(ctx context.Context, req *types.QueryA
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllDailyDistributionTotalResponse{DailyDistributionTotals: dailyDistributionTotals, Pagination: pageRes}, nil
+	params := k.GetParams(ctx)
+
+	totals := make([]types.DailyDistributionTotalEntry, 0, len(dailyDistributionTotals))
+	for date, total := range dailyDistributionTotals {
+		totals = append(totals, types.DailyDistributionTotalEntry{
+			Date:   date,
+			Amount: fmt.Sprintf("%d%s", total, params.Denom),
+		})
+	}
+
+	return &types.QueryAllDailyDistributionTotalResponse{DailyDistributionTotals: totals, Pagination: pageRes}, nil
 }
 
 func (k Keeper) DailyDistributionTotal(ctx context.Context, req *types.QueryGetDailyDistributionTotalRequest) (*types.QueryGetDailyDistributionTotalResponse, error) {

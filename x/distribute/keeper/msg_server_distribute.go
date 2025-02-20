@@ -2,6 +2,13 @@ package keeper
 
 import (
 	"context"
+	"crypto"
+	"crypto/rsa"
+	"crypto/sha256"
+	"crypto/x509"
+	"encoding/hex"
+	"encoding/pem"
+	"fmt"
 	"time"
 
 	gomath "math"
@@ -22,7 +29,8 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 	}
 
 	params := k.GetParams(ctx)
-	// check if minting will exceed max supply
+	distributionSignerPublicKey := params.DistributionSignerPublicKey
+
 	currentSupply := k.bankKeeper.GetSupply(ctx, params.Denom).Amount.Uint64()
 	if currentSupply+msg.Amount > params.MaxSupply {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "Max supply exceeded")
@@ -47,6 +55,33 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 		today := time.Now().Truncate(0)
 		if distributionDate.After(today) {
 			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date is in the future")
+		}
+
+		hashInput := fmt.Sprintf("%s:%d:%s", recipientDistribution.DistributionDate, recipientDistribution.Amount, recipientDistribution.Address)
+		hash := sha256.Sum256([]byte(hashInput))
+
+		block, _ := pem.Decode([]byte(distributionSignerPublicKey))
+		if block == nil {
+			return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to decode PEM block")
+		}
+
+		pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
+		if err != nil {
+			return nil, errorsmod.Wrap(err, "failed to unmarshal distribution signer public key")
+		}
+		rsaPubKey, ok := pubKey.(*rsa.PublicKey)
+		if !ok {
+			return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "distribution signer public key is not an RSA public key")
+		}
+
+		signature, err := hex.DecodeString(recipientDistribution.Signature)
+		if err != nil {
+			return nil, errorsmod.Wrap(err, "failed to decode signature")
+		}
+
+		err = rsa.VerifyPKCS1v15(rsaPubKey, crypto.SHA256, hash[:], signature)
+		if err != nil {
+			return nil, errorsmod.Wrap(err, "signature verification failed")
 		}
 
 		// Initialize or add to the total for this date

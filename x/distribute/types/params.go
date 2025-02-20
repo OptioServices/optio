@@ -35,6 +35,19 @@ var (
 	DefaultMonthsInHalvingPeriod uint64 = 12
 )
 
+var (
+	KeyDistributionSignerPublicKey     = []byte("DistributionSignerPublicKey")
+	DefaultDistributionSignerPublicKey = `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxQpapckgnO3A25SV1JFX
+75CatwQ3S0zhAwUTfnnWJAmQjki3NcmIiI5hVSMeDQXgEcUJgXaTtwe8wvrexOfD
+3YlWd0+ljJoeq2UqhZDtJZZ5F3PVVG2TJVWma3c5oQN9CtRswktrZxICKxIr4cgb
+CF3iahvaXDr2e8Tmr6RobL/oE3SgD0Xxp7xcKTra2mVSNMhc9xQhzdwvuUqYG+JK
+7+9trX0H8LyWcZiFzDH5nOJUVgHnvu68c7OCqYmku6NTG1iIzwwR+WggYiB/fb8R
+eSZp24q9+ckJ5h1dIP4EVRxx35dat9JqEvgGaWViL4EujHPfUR3VmQzxCeFXj+or
+bQIDAQAB
+-----END PUBLIC KEY-----`
+)
+
 // ParamKeyTable the param key table for launch module
 func ParamKeyTable() paramtypes.KeyTable {
 	return paramtypes.NewKeyTable().RegisterParamSet(&Params{})
@@ -47,13 +60,15 @@ func NewParams(
 	maxSupply uint64,
 	distributionStartDate string,
 	monthsInHalvingPeriod uint64,
+	distributionSignerPublicKey string,
 ) Params {
 	return Params{
-		AuthorizedAccounts:    authorizedAccounts,
-		Denom:                 denom,
-		MaxSupply:             maxSupply,
-		DistributionStartDate: distributionStartDate,
-		MonthsInHalvingPeriod: monthsInHalvingPeriod,
+		AuthorizedAccounts:          authorizedAccounts,
+		Denom:                       denom,
+		MaxSupply:                   maxSupply,
+		DistributionStartDate:       distributionStartDate,
+		MonthsInHalvingPeriod:       monthsInHalvingPeriod,
+		DistributionSignerPublicKey: distributionSignerPublicKey,
 	}
 }
 
@@ -65,6 +80,7 @@ func DefaultParams() Params {
 		DefaultMaxSupply,
 		DefaultDistributionStartDate,
 		DefaultMonthsInHalvingPeriod,
+		DefaultDistributionSignerPublicKey,
 	)
 }
 
