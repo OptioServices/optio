@@ -5,8 +5,13 @@ option go_package = "github.com/OptioServices/optio/x/distribute/types";
 
 message Recipient {
   
-  uint64 amount = 1; 
   string address = 2;
-  string distributionDate = 3;
-  string signature = 4;
+  repeated RecipientDistribution distributions = 3;
+}
+
+message RecipientDistribution {
+  
+  uint64 amount = 1; 
+  string distributionDate = 2;
+  string signature = 3;
 }

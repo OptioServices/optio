@@ -36,7 +36,10 @@ func (msg *MsgDistribute) ValidateBasic() error {
 		if err != nil {
 			return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid recipient address (%s)", err)
 		}
-		total += recipient.Amount
+
+		for _, distribute := range recipient.Distributions {
+			total += distribute.Amount
+		}
 	}
 	if total != msg.Amount {
 		return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "amount and recipient amounts total do not match")

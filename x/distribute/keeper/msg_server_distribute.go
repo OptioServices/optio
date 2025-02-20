@@ -44,51 +44,53 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 	distributionTotals := k.GetAllDailyDistributionTotal(ctx)
 	recipientDistributionTotals := make(map[string]uint64)
 	for _, recipientDistribution := range msg.Recipients {
-		distributionDate, err := time.Parse("2006/01/02", recipientDistribution.DistributionDate)
-		if err != nil {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution date. expected format: YYYY/MM/DD")
-		}
-		if distributionDate.Before(distributionStartDate) {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date is before start date")
-		}
+		for _, distribution := range recipientDistribution.Distributions {
+			distributionDate, err := time.Parse("2006/01/02", distribution.DistributionDate)
+			if err != nil {
+				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution date. expected format: YYYY/MM/DD")
+			}
+			if distributionDate.Before(distributionStartDate) {
+				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date is before start date")
+			}
 
-		today := time.Now().Truncate(0)
-		if distributionDate.After(today) {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date is in the future")
-		}
+			today := time.Now().Truncate(0)
+			if distributionDate.After(today) {
+				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date is in the future")
+			}
 
-		hashInput := fmt.Sprintf("%s:%d:%s", recipientDistribution.DistributionDate, recipientDistribution.Amount, recipientDistribution.Address)
-		hash := sha256.Sum256([]byte(hashInput))
+			hashInput := fmt.Sprintf("%s:%d:%s", distribution.DistributionDate, distribution.Amount, recipientDistribution.Address)
+			hash := sha256.Sum256([]byte(hashInput))
 
-		block, _ := pem.Decode([]byte(distributionSignerPublicKey))
-		if block == nil {
-			return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to decode PEM block")
-		}
+			block, _ := pem.Decode([]byte(distributionSignerPublicKey))
+			if block == nil {
+				return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to decode PEM block")
+			}
 
-		pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
-		if err != nil {
-			return nil, errorsmod.Wrap(err, "failed to unmarshal distribution signer public key")
-		}
-		rsaPubKey, ok := pubKey.(*rsa.PublicKey)
-		if !ok {
-			return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "distribution signer public key is not an RSA public key")
-		}
+			pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
+			if err != nil {
+				return nil, errorsmod.Wrap(err, "failed to unmarshal distribution signer public key")
+			}
+			rsaPubKey, ok := pubKey.(*rsa.PublicKey)
+			if !ok {
+				return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "distribution signer public key is not an RSA public key")
+			}
 
-		signature, err := hex.DecodeString(recipientDistribution.Signature)
-		if err != nil {
-			return nil, errorsmod.Wrap(err, "failed to decode signature")
-		}
+			signature, err := hex.DecodeString(distribution.Signature)
+			if err != nil {
+				return nil, errorsmod.Wrap(err, "failed to decode signature")
+			}
 
-		err = rsa.VerifyPKCS1v15(rsaPubKey, crypto.SHA256, hash[:], signature)
-		if err != nil {
-			return nil, errorsmod.Wrap(err, "signature verification failed")
-		}
+			err = rsa.VerifyPKCS1v15(rsaPubKey, crypto.SHA256, hash[:], signature)
+			if err != nil {
+				return nil, errorsmod.Wrap(err, "signature verification failed")
+			}
 
-		// Initialize or add to the total for this date
-		if _, exists := recipientDistributionTotals[recipientDistribution.DistributionDate]; !exists {
-			recipientDistributionTotals[recipientDistribution.DistributionDate] = 0
+			// Initialize or add to the total for this date
+			if _, exists := recipientDistributionTotals[distribution.DistributionDate]; !exists {
+				recipientDistributionTotals[distribution.DistributionDate] = 0
+			}
+			recipientDistributionTotals[distribution.DistributionDate] += distribution.Amount
 		}
-		recipientDistributionTotals[recipientDistribution.DistributionDate] += recipientDistribution.Amount
 	}
 
 	// check if recipient distribution totals will exceed daily limits
@@ -117,7 +119,12 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid recipient address")
 		}
 
-		coins := sdk.NewCoins(sdk.NewCoin(params.Denom, math.NewIntFromUint64(recipient.Amount)))
+		distributionAmount := uint64(0)
+		for _, distribution := range recipient.Distributions {
+			distributionAmount += distribution.Amount
+		}
+
+		coins := sdk.NewCoins(sdk.NewCoin(params.Denom, math.NewIntFromUint64(distributionAmount)))
 		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, acct, coins)
 		if err != nil {
 			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "sending coins failed")
