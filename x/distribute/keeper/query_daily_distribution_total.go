@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strconv"
 
 	"cosmossdk.io/store/prefix"
@@ -46,6 +47,10 @@ func (k Keeper) DailyDistributionTotalAll(ctx context.Context, req *types.QueryA
 			Amount: fmt.Sprintf("%d%s", total, params.Denom),
 		})
 	}
+
+	sort.Slice(totals, func(i, j int) bool {
+		return totals[i].Date > totals[j].Date
+	})
 
 	return &types.QueryAllDailyDistributionTotalResponse{DailyDistributionTotals: totals, Pagination: pageRes}, nil
 }
