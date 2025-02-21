@@ -27,7 +27,7 @@ var (
 
 var (
 	KeyDistributionStartDate     = []byte("DistributionStartDate")
-	DefaultDistributionStartDate = "2024/09/15"
+	DefaultDistributionStartDate = "2024-09-15"
 )
 
 var (
@@ -177,8 +177,8 @@ func validateDistributionStartDate(v interface{}) error {
 		return fmt.Errorf("distribution start date cannot be empty")
 	}
 
-	if _, err := time.Parse("2006/01/02", distributionStartDate); err != nil {
-		return fmt.Errorf("invalid distribution start date format; expected yyyy/mm/dd, got %s", distributionStartDate)
+	if _, err := time.Parse("2006-01-02", distributionStartDate); err != nil {
+		return fmt.Errorf("invalid distribution start date format; expected yyyy-mm-dd, got %s", distributionStartDate)
 	}
 
 	return nil

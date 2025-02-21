@@ -98,6 +98,7 @@ type AppModule struct {
 	keeper        keeper.Keeper
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
+	viewKeeper    types.ViewKeeper
 }
 
 func NewAppModule(
@@ -105,12 +106,14 @@ func NewAppModule(
 	keeper keeper.Keeper,
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
+	viewKeeper types.ViewKeeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(cdc),
 		keeper:         keeper,
 		accountKeeper:  accountKeeper,
 		bankKeeper:     bankKeeper,
+		viewKeeper:     viewKeeper,
 	}
 }
 
@@ -130,6 +133,12 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, gs json.Ra
 	cdc.MustUnmarshalJSON(gs, &genState)
 
 	InitGenesis(ctx, am.keeper, genState)
+
+	moduleAcc := am.accountKeeper.GetModuleAccount(ctx, types.ModuleName)
+	if moduleAcc == nil {
+		panic(fmt.Sprintf("%s module account has not been set", types.ModuleName))
+	}
+	am.accountKeeper.SetModuleAccount(ctx, moduleAcc)
 }
 
 // ExportGenesis returns the module's exported genesis state as raw JSON bytes.
@@ -182,6 +191,7 @@ type ModuleInputs struct {
 
 	AccountKeeper types.AccountKeeper
 	BankKeeper    types.BankKeeper
+	ViewKeeper    types.ViewKeeper
 }
 
 type ModuleOutputs struct {
@@ -202,13 +212,16 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.StoreService,
 		in.Logger,
 		authority.String(),
+		in.AccountKeeper,
 		in.BankKeeper,
+		in.ViewKeeper,
 	)
 	m := NewAppModule(
 		in.Cdc,
 		k,
 		in.AccountKeeper,
 		in.BankKeeper,
+		in.ViewKeeper,
 	)
 
 	return ModuleOutputs{DistributeKeeper: k, Module: m}

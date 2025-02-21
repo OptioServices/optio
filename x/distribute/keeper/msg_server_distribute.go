@@ -36,7 +36,7 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "Max supply exceeded")
 	}
 
-	distributionStartDate, err := time.Parse("2006/01/02", params.DistributionStartDate)
+	distributionStartDate, err := time.Parse("2006-01-02", params.DistributionStartDate)
 	if err != nil {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution start date. expected format: YYYY/MM/DD")
 	}
@@ -45,7 +45,7 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 	recipientDistributionTotals := make(map[string]uint64)
 	for _, recipientDistribution := range msg.Recipients {
 		for _, distribution := range recipientDistribution.Distributions {
-			distributionDate, err := time.Parse("2006/01/02", distribution.DistributionDate)
+			distributionDate, err := time.Parse("2006-01-02", distribution.DistributionDate)
 			if err != nil {
 				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution date. expected format: YYYY/MM/DD")
 			}
@@ -107,10 +107,16 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 		}
 	}
 
-	coin := sdk.NewCoin(params.Denom, math.NewIntFromUint64(msg.Amount))
-	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(coin))
-	if err != nil {
-		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "minting coins failed")
+	moduleAddress := k.accountKeeper.GetModuleAddress(types.ModuleName)
+	moduleCoins := k.viewKeeper.GetBalance(ctx, moduleAddress, params.Denom)
+
+	if moduleCoins.Amount.Uint64() < msg.Amount {
+		amountToMint := msg.Amount - moduleCoins.Amount.Uint64()
+		coinsToMint := sdk.NewCoin(params.Denom, math.NewIntFromUint64(amountToMint))
+		err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(coinsToMint))
+		if err != nil {
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "minting coins failed")
+		}
 	}
 
 	for _, recipient := range msg.Recipients {
@@ -139,11 +145,11 @@ func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (
 }
 
 func calculateDailyLimit(date string, params types.Params) uint64 {
-	distributionStartDate, err := time.Parse("2006/01/02", params.DistributionStartDate)
+	distributionStartDate, err := time.Parse("2006-01-02", params.DistributionStartDate)
 	if err != nil {
 		return 0
 	}
-	distributionDate, err := time.Parse("2006/01/02", date)
+	distributionDate, err := time.Parse("2006-01-02", date)
 	if err != nil {
 		return 0
 	}

@@ -3,12 +3,11 @@ validation: sovereign
 accounts: 
 - name: distribute
   coins:
-  - 1stake
   - 1000000000uOPT
   address: optio13zj88zcylclhevtsztx0kdgf9a5zyskt4utffh
 - name: alice
   coins:
-  - 1000000000uOPT
+  - 100000000000000uOPT
 client:
   openapi:
     path: docs/static/openapi.yml
