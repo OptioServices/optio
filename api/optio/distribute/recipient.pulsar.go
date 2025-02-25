@@ -670,8 +670,8 @@ func (x *fastReflection_RecipientDistribution) Range(f func(protoreflect.FieldDe
 			return
 		}
 	}
-	if x.Nonce != "" {
-		value := protoreflect.ValueOfString(x.Nonce)
+	if x.Nonce != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.Nonce)
 		if !f(fd_RecipientDistribution_nonce, value) {
 			return
 		}
@@ -698,7 +698,7 @@ func (x *fastReflection_RecipientDistribution) Has(fd protoreflect.FieldDescript
 	case "optio.distribute.RecipientDistribution.signature":
 		return x.Signature != ""
 	case "optio.distribute.RecipientDistribution.nonce":
-		return x.Nonce != ""
+		return x.Nonce != uint64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.RecipientDistribution"))
@@ -722,7 +722,7 @@ func (x *fastReflection_RecipientDistribution) Clear(fd protoreflect.FieldDescri
 	case "optio.distribute.RecipientDistribution.signature":
 		x.Signature = ""
 	case "optio.distribute.RecipientDistribution.nonce":
-		x.Nonce = ""
+		x.Nonce = uint64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.RecipientDistribution"))
@@ -750,7 +750,7 @@ func (x *fastReflection_RecipientDistribution) Get(descriptor protoreflect.Field
 		return protoreflect.ValueOfString(value)
 	case "optio.distribute.RecipientDistribution.nonce":
 		value := x.Nonce
-		return protoreflect.ValueOfString(value)
+		return protoreflect.ValueOfUint64(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.RecipientDistribution"))
@@ -778,7 +778,7 @@ func (x *fastReflection_RecipientDistribution) Set(fd protoreflect.FieldDescript
 	case "optio.distribute.RecipientDistribution.signature":
 		x.Signature = value.Interface().(string)
 	case "optio.distribute.RecipientDistribution.nonce":
-		x.Nonce = value.Interface().(string)
+		x.Nonce = value.Uint()
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.RecipientDistribution"))
@@ -827,7 +827,7 @@ func (x *fastReflection_RecipientDistribution) NewField(fd protoreflect.FieldDes
 	case "optio.distribute.RecipientDistribution.signature":
 		return protoreflect.ValueOfString("")
 	case "optio.distribute.RecipientDistribution.nonce":
-		return protoreflect.ValueOfString("")
+		return protoreflect.ValueOfUint64(uint64(0))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distribute.RecipientDistribution"))
@@ -908,9 +908,8 @@ func (x *fastReflection_RecipientDistribution) ProtoMethods() *protoiface.Method
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
-		l = len(x.Nonce)
-		if l > 0 {
-			n += 1 + l + runtime.Sov(uint64(l))
+		if x.Nonce != 0 {
+			n += 1 + runtime.Sov(uint64(x.Nonce))
 		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
@@ -941,12 +940,10 @@ func (x *fastReflection_RecipientDistribution) ProtoMethods() *protoiface.Method
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
-		if len(x.Nonce) > 0 {
-			i -= len(x.Nonce)
-			copy(dAtA[i:], x.Nonce)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Nonce)))
+		if x.Nonce != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.Nonce))
 			i--
-			dAtA[i] = 0x22
+			dAtA[i] = 0x20
 		}
 		if len(x.Signature) > 0 {
 			i -= len(x.Signature)
@@ -1100,10 +1097,10 @@ func (x *fastReflection_RecipientDistribution) ProtoMethods() *protoiface.Method
 				x.Signature = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			case 4:
-				if wireType != 2 {
+				if wireType != 0 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Nonce", wireType)
 				}
-				var stringLen uint64
+				x.Nonce = 0
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
@@ -1113,24 +1110,11 @@ func (x *fastReflection_RecipientDistribution) ProtoMethods() *protoiface.Method
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
+					x.Nonce |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
 				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.Nonce = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -1230,7 +1214,7 @@ type RecipientDistribution struct {
 	Amount           uint64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
 	DistributionDate string `protobuf:"bytes,2,opt,name=distributionDate,proto3" json:"distributionDate,omitempty"`
 	Signature        string `protobuf:"bytes,3,opt,name=signature,proto3" json:"signature,omitempty"`
-	Nonce            string `protobuf:"bytes,4,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	Nonce            uint64 `protobuf:"varint,4,opt,name=nonce,proto3" json:"nonce,omitempty"`
 }
 
 func (x *RecipientDistribution) Reset() {
@@ -1274,11 +1258,11 @@ func (x *RecipientDistribution) GetSignature() string {
 	return ""
 }
 
-func (x *RecipientDistribution) GetNonce() string {
+func (x *RecipientDistribution) GetNonce() uint64 {
 	if x != nil {
 		return x.Nonce
 	}
-	return ""
+	return 0
 }
 
 var File_optio_distribute_recipient_proto protoreflect.FileDescriptor
@@ -1303,7 +1287,7 @@ var file_optio_distribute_recipient_proto_rawDesc = []byte{
 	0x74, 0x69, 0x6f, 0x6e, 0x44, 0x61, 0x74, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x73, 0x69, 0x67, 0x6e,
 	0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x73, 0x69, 0x67,
 	0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x18,
-	0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x42, 0xbc, 0x01, 0x0a,
+	0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x05, 0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x42, 0xbc, 0x01, 0x0a,
 	0x14, 0x63, 0x6f, 0x6d, 0x2e, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2e, 0x64, 0x69, 0x73, 0x74, 0x72,
 	0x69, 0x62, 0x75, 0x74, 0x65, 0x42, 0x0e, 0x52, 0x65, 0x63, 0x69, 0x70, 0x69, 0x65, 0x6e, 0x74,
 	0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x33, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e,
