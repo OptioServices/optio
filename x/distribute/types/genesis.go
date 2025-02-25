@@ -29,7 +29,7 @@ func DefaultGenesis() *GenesisState {
 	}
 
 	return &GenesisState{
-		DailyDistributionTotals: dailyDistributionTotals,
+		DistributedTotals: dailyDistributionTotals,
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}
@@ -41,7 +41,7 @@ func (gs GenesisState) Validate() error {
 	// Check for duplicated index in dailyDistributionTotal
 	dailyDistributionTotalIndexMap := make(map[string]struct{})
 
-	for date := range gs.DailyDistributionTotals {
+	for date := range gs.DistributedTotals {
 		index := string(DailyDistributionTotalKey(date))
 		if _, ok := dailyDistributionTotalIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for dailyDistributionTotal")

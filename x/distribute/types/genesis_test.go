@@ -22,7 +22,7 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
 
-				DailyDistributionTotals: map[string]uint64{
+				DistributedTotals: map[string]uint64{
 					"0": 0,
 					"1": 1,
 				},
@@ -33,7 +33,7 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "duplicated dailyDistributionTotal",
 			genState: &types.GenesisState{
-				DailyDistributionTotals: map[string]uint64{
+				DistributedTotals: map[string]uint64{
 					"0": 0,
 					"1": 1,
 				},

@@ -6,7 +6,7 @@ var _ binary.ByteOrder
 
 const (
 	// DailyDistributionTotalKeyPrefix is the prefix to retrieve all DailyDistributionTotal
-	DailyDistributionTotalKeyPrefix = "DailyDistributionTotal/value/"
+	DailyDistributionTotalKeyPrefix = "distributed/"
 )
 
 // DailyDistributionTotalKey returns the store key to retrieve a DailyDistributionTotal from the index fields

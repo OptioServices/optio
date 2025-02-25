@@ -71,21 +71,27 @@ func (k msgServer) processDistributions(ctx sdk.Context, recipients []*types.Rec
 	today := ctx.BlockTime().Truncate(0)
 
 	totals := make(map[string]uint64, len(recipients))
-	for _, recipient := range recipients {
-		for _, distribution := range recipient.Distributions {
-			date, err := parseDate(distribution.DistributionDate)
+	for _, r := range recipients {
+		for _, d := range r.Distributions {
+			date, err := parseDate(d.DistributionDate)
 			if err != nil || date.Before(startDate) || date.After(today) {
-				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution date '%s'", distribution.DistributionDate)
+				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution date '%s'", d.DistributionDate)
 			}
 
-			hashInput := fmt.Sprintf("%s:%d:%s", distribution.DistributionDate, distribution.Amount, recipient.Address)
+			if k.HasNonceBeenUsed(ctx, d.Nonce) {
+				return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "nonce already used")
+			}
+
+			hashInput := fmt.Sprintf("%s:%d:%s:%s", d.DistributionDate, d.Amount, r.Address, d.Nonce)
 			hash := sha256.Sum256([]byte(hashInput))
-			sig, err := hex.DecodeString(distribution.Signature)
+			sig, err := hex.DecodeString(d.Signature)
 			if err != nil || rsa.VerifyPKCS1v15(pubKey, crypto.SHA256, hash[:], sig) != nil {
 				return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "signature verification failed")
 			}
 
-			totals[distribution.DistributionDate] += distribution.Amount
+			k.SetNonceUsed(ctx, d.Nonce)
+
+			totals[d.DistributionDate] += d.Amount
 		}
 	}
 	return totals, nil

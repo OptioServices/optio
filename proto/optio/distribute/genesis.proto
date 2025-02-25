@@ -13,6 +13,6 @@ message GenesisState {
   
   // params defines all the parameters of the module.
            Params                 params                     = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
-  map<string, uint64> dailyDistributionTotals = 2 [(gogoproto.nullable) = false];
+  map<string, uint64> distributedTotals = 2 [(gogoproto.nullable) = false];
 }
 
