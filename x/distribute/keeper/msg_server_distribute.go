@@ -82,7 +82,7 @@ func (k msgServer) processDistributions(ctx sdk.Context, recipients []*types.Rec
 				return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "nonce already used")
 			}
 
-			hashInput := fmt.Sprintf("%s:%d:%s:%s", d.DistributionDate, d.Amount, r.Address, d.Nonce)
+			hashInput := fmt.Sprintf("%s:%d:%s:%d", d.DistributionDate, d.Amount, r.Address, d.Nonce)
 			hash := sha256.Sum256([]byte(hashInput))
 			sig, err := hex.DecodeString(d.Signature)
 			if err != nil || rsa.VerifyPKCS1v15(pubKey, crypto.SHA256, hash[:], sig) != nil {
