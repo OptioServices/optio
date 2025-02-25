@@ -19,7 +19,7 @@ func createNDailyDistributionTotal(keeper keeper.Keeper, ctx context.Context, n 
 	for i := 0; i < n; i++ {
 		items[strconv.Itoa(i)] = uint64(i)
 
-		keeper.SetDailyDistributionTotal(ctx, uint64(i), strconv.Itoa(i))
+		keeper.SetDailyDistributionTotal(ctx, strconv.Itoa(i), uint64(i))
 	}
 	return items
 }
@@ -38,25 +38,12 @@ func TestDailyDistributionTotalGet(t *testing.T) {
 		)
 	}
 }
-func TestDailyDistributionTotalRemove(t *testing.T) {
-	keeper, ctx := keepertest.DistributeKeeper(t)
-	items := createNDailyDistributionTotal(keeper, ctx, 10)
-	for i, _ := range items {
-		keeper.RemoveDailyDistributionTotal(ctx,
-			i,
-		)
-		_, found := keeper.GetDailyDistributionTotal(ctx,
-			i,
-		)
-		require.False(t, found)
-	}
-}
 
 func TestDailyDistributionTotalGetAll(t *testing.T) {
 	keeper, ctx := keepertest.DistributeKeeper(t)
 	items := createNDailyDistributionTotal(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllDailyDistributionTotal(ctx)),
+		nullify.Fill(keeper.GetDailyDistributionTotals(ctx)),
 	)
 }

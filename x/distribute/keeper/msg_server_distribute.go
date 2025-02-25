@@ -11,8 +11,6 @@ import (
 	"fmt"
 	"time"
 
-	gomath "math"
-
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	"github.com/OptioServices/optio/x/distribute/types"
@@ -23,159 +21,196 @@ import (
 func (k msgServer) Distribute(goCtx context.Context, msg *types.MsgDistribute) (*types.MsgDistributeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	authorized := k.IsAuthorized(ctx, msg.FromAddress)
-	if !authorized {
+	if !k.IsAuthorized(ctx, msg.FromAddress) {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrUnauthorized, "Unauthorized sender")
 	}
 
 	params := k.GetParams(ctx)
-	distributionSignerPublicKey := params.DistributionSignerPublicKey
-
-	currentSupply := k.bankKeeper.GetSupply(ctx, params.Denom).Amount.Uint64()
-	if currentSupply+msg.Amount > params.MaxSupply {
-		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "Max supply exceeded")
-	}
-
-	distributionStartDate, err := time.Parse("2006-01-02", params.DistributionStartDate)
+	startDate, err := parseDate(params.DistributionStartDate)
 	if err != nil {
-		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution start date. expected format: YYYY/MM/DD")
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution start date: %v", err)
 	}
 
-	distributionTotals := k.GetAllDailyDistributionTotal(ctx)
-	recipientDistributionTotals := make(map[string]uint64)
-	for _, recipientDistribution := range msg.Recipients {
-		for _, distribution := range recipientDistribution.Distributions {
-			distributionDate, err := time.Parse("2006-01-02", distribution.DistributionDate)
-			if err != nil {
-				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution date. expected format: YYYY/MM/DD")
-			}
-			if distributionDate.Before(distributionStartDate) {
-				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date is before start date")
-			}
-
-			today := time.Now().Truncate(0)
-			if distributionDate.After(today) {
-				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date is in the future")
-			}
-
-			hashInput := fmt.Sprintf("%s:%d:%s", distribution.DistributionDate, distribution.Amount, recipientDistribution.Address)
-			hash := sha256.Sum256([]byte(hashInput))
-
-			block, _ := pem.Decode([]byte(distributionSignerPublicKey))
-			if block == nil {
-				return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to decode PEM block")
-			}
-
-			pubKey, err := x509.ParsePKIXPublicKey(block.Bytes)
-			if err != nil {
-				return nil, errorsmod.Wrap(err, "failed to unmarshal distribution signer public key")
-			}
-			rsaPubKey, ok := pubKey.(*rsa.PublicKey)
-			if !ok {
-				return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "distribution signer public key is not an RSA public key")
-			}
-
-			signature, err := hex.DecodeString(distribution.Signature)
-			if err != nil {
-				return nil, errorsmod.Wrap(err, "failed to decode signature")
-			}
-
-			err = rsa.VerifyPKCS1v15(rsaPubKey, crypto.SHA256, hash[:], signature)
-			if err != nil {
-				return nil, errorsmod.Wrap(err, "signature verification failed")
-			}
-
-			// Initialize or add to the total for this date
-			if _, exists := recipientDistributionTotals[distribution.DistributionDate]; !exists {
-				recipientDistributionTotals[distribution.DistributionDate] = 0
-			}
-			recipientDistributionTotals[distribution.DistributionDate] += distribution.Amount
-		}
+	currentSupply := math.NewUint(k.bankKeeper.GetSupply(ctx, params.Denom).Amount.Uint64())
+	msgAmount := math.NewUint(msg.Amount)
+	if currentSupply.Add(msgAmount).GT(math.NewUint(params.MaxSupply)) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "max supply exceeded")
 	}
 
-	// check if recipient distribution totals will exceed daily limits
-	for date, total := range recipientDistributionTotals {
-		dailyLimit := calculateDailyLimit(date, params)
-		if currentTotal, ok := distributionTotals[date]; ok {
-			if total+currentTotal > dailyLimit {
-				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date '%s' total will exceed daily limit", date)
-			}
-		} else {
-			if total > dailyLimit {
-				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "distribution date '%s' total will exceed daily limit", date)
-			}
-		}
+	totals, err := k.processDistributions(ctx, msg.Recipients, startDate, params)
+	if err != nil {
+		return nil, err
 	}
 
-	moduleAddress := k.accountKeeper.GetModuleAddress(types.ModuleName)
-	moduleCoins := k.viewKeeper.GetBalance(ctx, moduleAddress, params.Denom)
-
-	if moduleCoins.Amount.Uint64() < msg.Amount {
-		amountToMint := msg.Amount - moduleCoins.Amount.Uint64()
-		coinsToMint := sdk.NewCoin(params.Denom, math.NewIntFromUint64(amountToMint))
-		err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(coinsToMint))
-		if err != nil {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "minting coins failed")
-		}
+	if err := k.validateDailyLimits(ctx, totals, params); err != nil {
+		return nil, err
 	}
 
-	for _, recipient := range msg.Recipients {
-		acct, err := sdk.AccAddressFromBech32(recipient.Address)
-		if err != nil {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid recipient address")
-		}
-
-		distributionAmount := uint64(0)
-		for _, distribution := range recipient.Distributions {
-			distributionAmount += distribution.Amount
-		}
-
-		coins := sdk.NewCoins(sdk.NewCoin(params.Denom, math.NewIntFromUint64(distributionAmount)))
-		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, acct, coins)
-		if err != nil {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "sending coins failed")
-		}
+	moduleAddr := k.accountKeeper.GetModuleAddress(types.ModuleName)
+	moduleBalance := math.NewUint(k.viewKeeper.GetBalance(ctx, moduleAddr, params.Denom).Amount.Uint64())
+	if err := k.mintIfNeeded(ctx, moduleBalance, msgAmount, params.Denom); err != nil {
+		return nil, err
 	}
 
-	for date, total := range recipientDistributionTotals {
-		k.UpdateDailyDistributionTotal(ctx, date, total)
+	if err := k.distributeCoins(ctx, msg.Recipients, params.Denom); err != nil {
+		return nil, err
+	}
+
+	if err := k.batchUpdateDailyTotals(ctx, totals); err != nil {
+		return nil, err
 	}
 
 	return &types.MsgDistributeResponse{}, nil
 }
 
+func (k msgServer) processDistributions(ctx sdk.Context, recipients []*types.Recipient, startDate time.Time, params types.Params) (map[string]uint64, error) {
+	pubKey, err := parseRSAPublicKey(params.DistributionSignerPublicKey)
+	if err != nil {
+		return nil, errorsmod.Wrapf(err, "invalid distribution signer public key")
+	}
+	today := ctx.BlockTime().Truncate(0)
+
+	totals := make(map[string]uint64, len(recipients))
+	for _, recipient := range recipients {
+		for _, distribution := range recipient.Distributions {
+			date, err := parseDate(distribution.DistributionDate)
+			if err != nil || date.Before(startDate) || date.After(today) {
+				return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid distribution date '%s'", distribution.DistributionDate)
+			}
+
+			hashInput := fmt.Sprintf("%s:%d:%s", distribution.DistributionDate, distribution.Amount, recipient.Address)
+			hash := sha256.Sum256([]byte(hashInput))
+			sig, err := hex.DecodeString(distribution.Signature)
+			if err != nil || rsa.VerifyPKCS1v15(pubKey, crypto.SHA256, hash[:], sig) != nil {
+				return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "signature verification failed")
+			}
+
+			totals[distribution.DistributionDate] += distribution.Amount
+		}
+	}
+	return totals, nil
+}
+
+func parseDate(dateStr string) (time.Time, error) {
+	return time.Parse("2006-01-02", dateStr)
+}
+
+func parseRSAPublicKey(pemStr string) (*rsa.PublicKey, error) {
+	block, _ := pem.Decode([]byte(pemStr))
+	if block == nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to decode PEM block")
+	}
+	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	rsaPub, ok := pub.(*rsa.PublicKey)
+	if !ok {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "not an RSA public key")
+	}
+	return rsaPub, nil
+}
+
+func (k msgServer) validateDailyLimits(ctx context.Context, totals map[string]uint64, params types.Params) error {
+	for date, total := range totals {
+		limit := calculateDailyLimit(date, params)
+		current, found := k.GetDailyDistributionTotal(ctx, date)
+		if found && math.NewUint(total).Add(math.NewUint(current)).GT(math.NewUint(limit)) {
+			return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "date '%s' exceeds daily limit", date)
+		}
+		if !found && total > limit {
+			return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "date '%s' exceeds daily limit", date)
+		}
+	}
+	return nil
+}
+
+func (k msgServer) mintIfNeeded(ctx context.Context, balance, amount math.Uint, denom string) error {
+	if balance.LT(amount) {
+		toMint := amount.Sub(balance)
+		coins := sdk.NewCoins(sdk.NewCoin(denom, math.NewIntFromUint64(toMint.Uint64())))
+		return k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
+	}
+	return nil
+}
+
+func (k msgServer) distributeCoins(ctx context.Context, recipients []*types.Recipient, denom string) error {
+	for _, r := range recipients {
+		acct, err := sdk.AccAddressFromBech32(r.Address)
+		if err != nil {
+			return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid address '%s'", r.Address)
+		}
+		amount := uint64(0)
+		for _, d := range r.Distributions {
+			amount += d.Amount
+		}
+		coins := sdk.NewCoins(sdk.NewCoin(denom, math.NewIntFromUint64(amount)))
+		if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, acct, coins); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (k msgServer) batchUpdateDailyTotals(ctx context.Context, totals map[string]uint64) error {
+	for date, amount := range totals {
+		current, found := k.GetDailyDistributionTotal(ctx, date)
+		newTotal := amount
+		if found {
+			newTotal += current
+		}
+		k.SetDailyDistributionTotal(ctx, date, newTotal)
+	}
+	return nil
+}
+
 func calculateDailyLimit(date string, params types.Params) uint64 {
-	distributionStartDate, err := time.Parse("2006-01-02", params.DistributionStartDate)
+	startDate, err := parseDate(params.DistributionStartDate)
 	if err != nil {
 		return 0
 	}
-	distributionDate, err := time.Parse("2006-01-02", date)
+	targetDate, err := parseDate(date)
 	if err != nil {
 		return 0
 	}
 
-	startDate := distributionStartDate
-	currentDate := distributionDate
-	months := 0
-
-	for startDate.Before(currentDate) {
-		startDate = startDate.AddDate(0, 1, 0) // Move to the next month
-		months++
+	months := monthsBetween(startDate, targetDate)
+	if months < 0 {
+		return 0
 	}
 
-	if months == 0 {
-		months = 1
+	halvingPeriod := 1 + uint64(months)/params.MonthsInHalvingPeriod
+	periodStartMonths := (halvingPeriod - 1) * params.MonthsInHalvingPeriod
+	periodEndMonths := halvingPeriod * params.MonthsInHalvingPeriod
+	periodStart := startDate.AddDate(0, int(periodStartMonths), 0)
+	periodEnd := startDate.AddDate(0, int(periodEndMonths), -1)
+
+	if targetDate.Before(periodStart) || !targetDate.Before(periodEnd.AddDate(0, 0, 1)) {
+		return 0
 	}
 
-	halvingPeriod := int(gomath.Ceil(float64(months) / float64(params.MonthsInHalvingPeriod)))
+	periodSupply := params.MaxSupply / (1 << halvingPeriod)
+	daysInPeriod := uint64(periodEnd.Sub(periodStart).Hours()/24) + 1
 
-	halvingPeriodStartDate := distributionStartDate.AddDate(0, halvingPeriod*int(params.MonthsInHalvingPeriod), 0)
-	halvingPeriodEndDate := halvingPeriodStartDate.AddDate(0, int(params.MonthsInHalvingPeriod), 0)
+	return periodSupply / daysInPeriod
+}
 
-	halvingPeriodSupply := params.MaxSupply / (1 << halvingPeriod) // 2 raised to the halving period
-	daysInPeriod := halvingPeriodEndDate.Sub(halvingPeriodStartDate).Hours() / 24
+func monthsBetween(start, end time.Time) int {
+	if end.Before(start) {
+		return -1
+	}
 
-	halvingPeriodSupplyPerDay := halvingPeriodSupply / uint64(daysInPeriod)
+	years := end.Year() - start.Year()
+	months := years*12 + int(end.Month()) - int(start.Month())
 
-	return halvingPeriodSupplyPerDay
+	// Adjust for day of month
+	if end.Day() < start.Day() {
+		months--
+	}
+
+	// Handle edge case where end is exactly on start's day but in a prior month
+	if months < 0 {
+		return 0
+	}
+	return months
 }
