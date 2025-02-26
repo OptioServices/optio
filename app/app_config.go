@@ -3,9 +3,9 @@ package app
 import (
 	"time"
 
-	distributemodulev1 "github.com/OptioServices/optio/api/optio/distribute/module"
-	_ "github.com/OptioServices/optio/x/distribute/module" // import for side-effects
-	distributemoduletypes "github.com/OptioServices/optio/x/distribute/types"
+	distromodulev1 "github.com/OptioServices/optio/api/optio/distro/module"
+	_ "github.com/OptioServices/optio/x/distro/module" // import for side-effects
+	distributemoduletypes "github.com/OptioServices/optio/x/distro/types"
 
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
 	appv1alpha1 "cosmossdk.io/api/cosmos/app/v1alpha1"
@@ -296,7 +296,7 @@ var (
 			},
 			{
 				Name:   distributemoduletypes.ModuleName,
-				Config: appconfig.WrapAny(&distributemodulev1.Module{}),
+				Config: appconfig.WrapAny(&distromodulev1.Module{}),
 			},
 			// this line is used by starport scaffolding # stargate/app/moduleConfig
 		},

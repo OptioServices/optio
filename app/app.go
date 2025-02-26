@@ -79,7 +79,7 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
 	"github.com/OptioServices/optio/app/upgrades"
-	distributemodulekeeper "github.com/OptioServices/optio/x/distribute/keeper"
+	distributemodulekeeper "github.com/OptioServices/optio/x/distro/keeper"
 
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	v2 "github.com/OptioServices/optio/app/upgrades/v2"
