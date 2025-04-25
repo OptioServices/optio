@@ -72,6 +72,11 @@ Edit the `app.toml` file located at `/root/.optio/config/app.toml`.
   enable = true
   enabled-unsafe-cors = true // false if you set a cors policy
   ```
+- Under the `[api]` section, optionally set your api address:
+  ```
+  [api]
+  address = "tcp://0.0.0.1317"
+  ```
 - Under the `[grpc]` section, ensure:
   ```
   [grpc]
