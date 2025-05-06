@@ -14,71 +14,25 @@ import (
 	sync "sync"
 )
 
-var _ protoreflect.List = (*_Params_1_list)(nil)
-
-type _Params_1_list struct {
-	list *[]string
-}
-
-func (x *_Params_1_list) Len() int {
-	if x.list == nil {
-		return 0
-	}
-	return len(*x.list)
-}
-
-func (x *_Params_1_list) Get(i int) protoreflect.Value {
-	return protoreflect.ValueOfString((*x.list)[i])
-}
-
-func (x *_Params_1_list) Set(i int, value protoreflect.Value) {
-	valueUnwrapped := value.String()
-	concreteValue := valueUnwrapped
-	(*x.list)[i] = concreteValue
-}
-
-func (x *_Params_1_list) Append(value protoreflect.Value) {
-	valueUnwrapped := value.String()
-	concreteValue := valueUnwrapped
-	*x.list = append(*x.list, concreteValue)
-}
-
-func (x *_Params_1_list) AppendMutable() protoreflect.Value {
-	panic(fmt.Errorf("AppendMutable can not be called on message Params at list field AuthorizedAccounts as it is not of Message kind"))
-}
-
-func (x *_Params_1_list) Truncate(n int) {
-	*x.list = (*x.list)[:n]
-}
-
-func (x *_Params_1_list) NewElement() protoreflect.Value {
-	v := ""
-	return protoreflect.ValueOfString(v)
-}
-
-func (x *_Params_1_list) IsValid() bool {
-	return x.list != nil
-}
-
 var (
-	md_Params                             protoreflect.MessageDescriptor
-	fd_Params_authorizedAccounts          protoreflect.FieldDescriptor
-	fd_Params_denom                       protoreflect.FieldDescriptor
-	fd_Params_maxSupply                   protoreflect.FieldDescriptor
-	fd_Params_distributionStartDate       protoreflect.FieldDescriptor
-	fd_Params_monthsInHalvingPeriod       protoreflect.FieldDescriptor
-	fd_Params_distributionSignerPublicKey protoreflect.FieldDescriptor
+	md_Params                       protoreflect.MessageDescriptor
+	fd_Params_mintingAddress        protoreflect.FieldDescriptor
+	fd_Params_receivingAddress      protoreflect.FieldDescriptor
+	fd_Params_denom                 protoreflect.FieldDescriptor
+	fd_Params_maxSupply             protoreflect.FieldDescriptor
+	fd_Params_distributionStartDate protoreflect.FieldDescriptor
+	fd_Params_monthsInHalvingPeriod protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_optio_distro_params_proto_init()
 	md_Params = File_optio_distro_params_proto.Messages().ByName("Params")
-	fd_Params_authorizedAccounts = md_Params.Fields().ByName("authorizedAccounts")
+	fd_Params_mintingAddress = md_Params.Fields().ByName("mintingAddress")
+	fd_Params_receivingAddress = md_Params.Fields().ByName("receivingAddress")
 	fd_Params_denom = md_Params.Fields().ByName("denom")
 	fd_Params_maxSupply = md_Params.Fields().ByName("maxSupply")
 	fd_Params_distributionStartDate = md_Params.Fields().ByName("distributionStartDate")
 	fd_Params_monthsInHalvingPeriod = md_Params.Fields().ByName("monthsInHalvingPeriod")
-	fd_Params_distributionSignerPublicKey = md_Params.Fields().ByName("distributionSignerPublicKey")
 }
 
 var _ protoreflect.Message = (*fastReflection_Params)(nil)
@@ -146,9 +100,15 @@ func (x *fastReflection_Params) Interface() protoreflect.ProtoMessage {
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if len(x.AuthorizedAccounts) != 0 {
-		value := protoreflect.ValueOfList(&_Params_1_list{list: &x.AuthorizedAccounts})
-		if !f(fd_Params_authorizedAccounts, value) {
+	if x.MintingAddress != "" {
+		value := protoreflect.ValueOfString(x.MintingAddress)
+		if !f(fd_Params_mintingAddress, value) {
+			return
+		}
+	}
+	if x.ReceivingAddress != "" {
+		value := protoreflect.ValueOfString(x.ReceivingAddress)
+		if !f(fd_Params_receivingAddress, value) {
 			return
 		}
 	}
@@ -176,12 +136,6 @@ func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, proto
 			return
 		}
 	}
-	if x.DistributionSignerPublicKey != "" {
-		value := protoreflect.ValueOfString(x.DistributionSignerPublicKey)
-		if !f(fd_Params_distributionSignerPublicKey, value) {
-			return
-		}
-	}
 }
 
 // Has reports whether a field is populated.
@@ -197,8 +151,10 @@ func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, proto
 // a repeated field is populated if it is non-empty.
 func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "optio.distro.Params.authorizedAccounts":
-		return len(x.AuthorizedAccounts) != 0
+	case "optio.distro.Params.mintingAddress":
+		return x.MintingAddress != ""
+	case "optio.distro.Params.receivingAddress":
+		return x.ReceivingAddress != ""
 	case "optio.distro.Params.denom":
 		return x.Denom != ""
 	case "optio.distro.Params.maxSupply":
@@ -207,8 +163,6 @@ func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 		return x.DistributionStartDate != ""
 	case "optio.distro.Params.monthsInHalvingPeriod":
 		return x.MonthsInHalvingPeriod != uint64(0)
-	case "optio.distro.Params.distributionSignerPublicKey":
-		return x.DistributionSignerPublicKey != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.Params"))
@@ -225,8 +179,10 @@ func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 // Clear is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "optio.distro.Params.authorizedAccounts":
-		x.AuthorizedAccounts = nil
+	case "optio.distro.Params.mintingAddress":
+		x.MintingAddress = ""
+	case "optio.distro.Params.receivingAddress":
+		x.ReceivingAddress = ""
 	case "optio.distro.Params.denom":
 		x.Denom = ""
 	case "optio.distro.Params.maxSupply":
@@ -235,8 +191,6 @@ func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 		x.DistributionStartDate = ""
 	case "optio.distro.Params.monthsInHalvingPeriod":
 		x.MonthsInHalvingPeriod = uint64(0)
-	case "optio.distro.Params.distributionSignerPublicKey":
-		x.DistributionSignerPublicKey = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.Params"))
@@ -253,12 +207,12 @@ func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 // of the value; to obtain a mutable reference, use Mutable.
 func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "optio.distro.Params.authorizedAccounts":
-		if len(x.AuthorizedAccounts) == 0 {
-			return protoreflect.ValueOfList(&_Params_1_list{})
-		}
-		listValue := &_Params_1_list{list: &x.AuthorizedAccounts}
-		return protoreflect.ValueOfList(listValue)
+	case "optio.distro.Params.mintingAddress":
+		value := x.MintingAddress
+		return protoreflect.ValueOfString(value)
+	case "optio.distro.Params.receivingAddress":
+		value := x.ReceivingAddress
+		return protoreflect.ValueOfString(value)
 	case "optio.distro.Params.denom":
 		value := x.Denom
 		return protoreflect.ValueOfString(value)
@@ -271,9 +225,6 @@ func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) pro
 	case "optio.distro.Params.monthsInHalvingPeriod":
 		value := x.MonthsInHalvingPeriod
 		return protoreflect.ValueOfUint64(value)
-	case "optio.distro.Params.distributionSignerPublicKey":
-		value := x.DistributionSignerPublicKey
-		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.Params"))
@@ -294,10 +245,10 @@ func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) pro
 // Set is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "optio.distro.Params.authorizedAccounts":
-		lv := value.List()
-		clv := lv.(*_Params_1_list)
-		x.AuthorizedAccounts = *clv.list
+	case "optio.distro.Params.mintingAddress":
+		x.MintingAddress = value.Interface().(string)
+	case "optio.distro.Params.receivingAddress":
+		x.ReceivingAddress = value.Interface().(string)
 	case "optio.distro.Params.denom":
 		x.Denom = value.Interface().(string)
 	case "optio.distro.Params.maxSupply":
@@ -306,8 +257,6 @@ func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value proto
 		x.DistributionStartDate = value.Interface().(string)
 	case "optio.distro.Params.monthsInHalvingPeriod":
 		x.MonthsInHalvingPeriod = value.Uint()
-	case "optio.distro.Params.distributionSignerPublicKey":
-		x.DistributionSignerPublicKey = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.Params"))
@@ -328,12 +277,10 @@ func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value proto
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "optio.distro.Params.authorizedAccounts":
-		if x.AuthorizedAccounts == nil {
-			x.AuthorizedAccounts = []string{}
-		}
-		value := &_Params_1_list{list: &x.AuthorizedAccounts}
-		return protoreflect.ValueOfList(value)
+	case "optio.distro.Params.mintingAddress":
+		panic(fmt.Errorf("field mintingAddress of message optio.distro.Params is not mutable"))
+	case "optio.distro.Params.receivingAddress":
+		panic(fmt.Errorf("field receivingAddress of message optio.distro.Params is not mutable"))
 	case "optio.distro.Params.denom":
 		panic(fmt.Errorf("field denom of message optio.distro.Params is not mutable"))
 	case "optio.distro.Params.maxSupply":
@@ -342,8 +289,6 @@ func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protore
 		panic(fmt.Errorf("field distributionStartDate of message optio.distro.Params is not mutable"))
 	case "optio.distro.Params.monthsInHalvingPeriod":
 		panic(fmt.Errorf("field monthsInHalvingPeriod of message optio.distro.Params is not mutable"))
-	case "optio.distro.Params.distributionSignerPublicKey":
-		panic(fmt.Errorf("field distributionSignerPublicKey of message optio.distro.Params is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.Params"))
@@ -357,9 +302,10 @@ func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protore
 // For lists, maps, and messages, this returns a new, empty, mutable value.
 func (x *fastReflection_Params) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "optio.distro.Params.authorizedAccounts":
-		list := []string{}
-		return protoreflect.ValueOfList(&_Params_1_list{list: &list})
+	case "optio.distro.Params.mintingAddress":
+		return protoreflect.ValueOfString("")
+	case "optio.distro.Params.receivingAddress":
+		return protoreflect.ValueOfString("")
 	case "optio.distro.Params.denom":
 		return protoreflect.ValueOfString("")
 	case "optio.distro.Params.maxSupply":
@@ -368,8 +314,6 @@ func (x *fastReflection_Params) NewField(fd protoreflect.FieldDescriptor) protor
 		return protoreflect.ValueOfString("")
 	case "optio.distro.Params.monthsInHalvingPeriod":
 		return protoreflect.ValueOfUint64(uint64(0))
-	case "optio.distro.Params.distributionSignerPublicKey":
-		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.Params"))
@@ -439,11 +383,13 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		var n int
 		var l int
 		_ = l
-		if len(x.AuthorizedAccounts) > 0 {
-			for _, s := range x.AuthorizedAccounts {
-				l = len(s)
-				n += 1 + l + runtime.Sov(uint64(l))
-			}
+		l = len(x.MintingAddress)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.ReceivingAddress)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
 		}
 		l = len(x.Denom)
 		if l > 0 {
@@ -458,10 +404,6 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		}
 		if x.MonthsInHalvingPeriod != 0 {
 			n += 1 + runtime.Sov(uint64(x.MonthsInHalvingPeriod))
-		}
-		l = len(x.DistributionSignerPublicKey)
-		if l > 0 {
-			n += 1 + l + runtime.Sov(uint64(l))
 		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
@@ -492,45 +434,43 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
-		if len(x.DistributionSignerPublicKey) > 0 {
-			i -= len(x.DistributionSignerPublicKey)
-			copy(dAtA[i:], x.DistributionSignerPublicKey)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.DistributionSignerPublicKey)))
-			i--
-			dAtA[i] = 0x32
-		}
 		if x.MonthsInHalvingPeriod != 0 {
 			i = runtime.EncodeVarint(dAtA, i, uint64(x.MonthsInHalvingPeriod))
 			i--
-			dAtA[i] = 0x28
+			dAtA[i] = 0x30
 		}
 		if len(x.DistributionStartDate) > 0 {
 			i -= len(x.DistributionStartDate)
 			copy(dAtA[i:], x.DistributionStartDate)
 			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.DistributionStartDate)))
 			i--
-			dAtA[i] = 0x22
+			dAtA[i] = 0x2a
 		}
 		if x.MaxSupply != 0 {
 			i = runtime.EncodeVarint(dAtA, i, uint64(x.MaxSupply))
 			i--
-			dAtA[i] = 0x18
+			dAtA[i] = 0x20
 		}
 		if len(x.Denom) > 0 {
 			i -= len(x.Denom)
 			copy(dAtA[i:], x.Denom)
 			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Denom)))
 			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.ReceivingAddress) > 0 {
+			i -= len(x.ReceivingAddress)
+			copy(dAtA[i:], x.ReceivingAddress)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ReceivingAddress)))
+			i--
 			dAtA[i] = 0x12
 		}
-		if len(x.AuthorizedAccounts) > 0 {
-			for iNdEx := len(x.AuthorizedAccounts) - 1; iNdEx >= 0; iNdEx-- {
-				i -= len(x.AuthorizedAccounts[iNdEx])
-				copy(dAtA[i:], x.AuthorizedAccounts[iNdEx])
-				i = runtime.EncodeVarint(dAtA, i, uint64(len(x.AuthorizedAccounts[iNdEx])))
-				i--
-				dAtA[i] = 0xa
-			}
+		if len(x.MintingAddress) > 0 {
+			i -= len(x.MintingAddress)
+			copy(dAtA[i:], x.MintingAddress)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MintingAddress)))
+			i--
+			dAtA[i] = 0xa
 		}
 		if input.Buf != nil {
 			input.Buf = append(input.Buf, dAtA...)
@@ -583,7 +523,7 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 			switch fieldNum {
 			case 1:
 				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AuthorizedAccounts", wireType)
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MintingAddress", wireType)
 				}
 				var stringLen uint64
 				for shift := uint(0); ; shift += 7 {
@@ -611,9 +551,41 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 				if postIndex > l {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
-				x.AuthorizedAccounts = append(x.AuthorizedAccounts, string(dAtA[iNdEx:postIndex]))
+				x.MintingAddress = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ReceivingAddress", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ReceivingAddress = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Denom", wireType)
 				}
@@ -645,7 +617,7 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 				}
 				x.Denom = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
-			case 3:
+			case 4:
 				if wireType != 0 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxSupply", wireType)
 				}
@@ -664,7 +636,7 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 						break
 					}
 				}
-			case 4:
+			case 5:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field DistributionStartDate", wireType)
 				}
@@ -696,7 +668,7 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 				}
 				x.DistributionStartDate = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
-			case 5:
+			case 6:
 				if wireType != 0 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MonthsInHalvingPeriod", wireType)
 				}
@@ -715,38 +687,6 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 						break
 					}
 				}
-			case 6:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field DistributionSignerPublicKey", wireType)
-				}
-				var stringLen uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.DistributionSignerPublicKey = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -801,12 +741,12 @@ type Params struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AuthorizedAccounts          []string `protobuf:"bytes,1,rep,name=authorizedAccounts,proto3" json:"authorizedAccounts,omitempty"`
-	Denom                       string   `protobuf:"bytes,2,opt,name=denom,proto3" json:"denom,omitempty"`
-	MaxSupply                   uint64   `protobuf:"varint,3,opt,name=maxSupply,proto3" json:"maxSupply,omitempty"`
-	DistributionStartDate       string   `protobuf:"bytes,4,opt,name=distributionStartDate,proto3" json:"distributionStartDate,omitempty"`
-	MonthsInHalvingPeriod       uint64   `protobuf:"varint,5,opt,name=monthsInHalvingPeriod,proto3" json:"monthsInHalvingPeriod,omitempty"`
-	DistributionSignerPublicKey string   `protobuf:"bytes,6,opt,name=distributionSignerPublicKey,proto3" json:"distributionSignerPublicKey,omitempty"`
+	MintingAddress        string `protobuf:"bytes,1,opt,name=mintingAddress,proto3" json:"mintingAddress,omitempty"`
+	ReceivingAddress      string `protobuf:"bytes,2,opt,name=receivingAddress,proto3" json:"receivingAddress,omitempty"`
+	Denom                 string `protobuf:"bytes,3,opt,name=denom,proto3" json:"denom,omitempty"`
+	MaxSupply             uint64 `protobuf:"varint,4,opt,name=maxSupply,proto3" json:"maxSupply,omitempty"`
+	DistributionStartDate string `protobuf:"bytes,5,opt,name=distributionStartDate,proto3" json:"distributionStartDate,omitempty"`
+	MonthsInHalvingPeriod uint64 `protobuf:"varint,6,opt,name=monthsInHalvingPeriod,proto3" json:"monthsInHalvingPeriod,omitempty"`
 }
 
 func (x *Params) Reset() {
@@ -829,11 +769,18 @@ func (*Params) Descriptor() ([]byte, []int) {
 	return file_optio_distro_params_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Params) GetAuthorizedAccounts() []string {
+func (x *Params) GetMintingAddress() string {
 	if x != nil {
-		return x.AuthorizedAccounts
+		return x.MintingAddress
 	}
-	return nil
+	return ""
+}
+
+func (x *Params) GetReceivingAddress() string {
+	if x != nil {
+		return x.ReceivingAddress
+	}
+	return ""
 }
 
 func (x *Params) GetDenom() string {
@@ -864,13 +811,6 @@ func (x *Params) GetMonthsInHalvingPeriod() uint64 {
 	return 0
 }
 
-func (x *Params) GetDistributionSignerPublicKey() string {
-	if x != nil {
-		return x.DistributionSignerPublicKey
-	}
-	return ""
-}
-
 var File_optio_distro_params_proto protoreflect.FileDescriptor
 
 var file_optio_distro_params_proto_rawDesc = []byte{
@@ -879,49 +819,46 @@ var file_optio_distro_params_proto_rawDesc = []byte{
 	0x69, 0x6f, 0x2e, 0x64, 0x69, 0x73, 0x74, 0x72, 0x6f, 0x1a, 0x11, 0x61, 0x6d, 0x69, 0x6e, 0x6f,
 	0x2f, 0x61, 0x6d, 0x69, 0x6e, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x14, 0x67, 0x6f,
 	0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x22, 0xf7, 0x03, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x4e, 0x0a,
-	0x12, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f, 0x75,
-	0x6e, 0x74, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x42, 0x1e, 0xf2, 0xde, 0x1f, 0x1a, 0x79,
-	0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x64, 0x5f,
-	0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x22, 0x52, 0x12, 0x61, 0x75, 0x74, 0x68, 0x6f,
-	0x72, 0x69, 0x7a, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x12, 0x26, 0x0a,
-	0x05, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x10, 0xf2, 0xde,
-	0x1f, 0x0c, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x22, 0x52, 0x05,
-	0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x33, 0x0a, 0x09, 0x6d, 0x61, 0x78, 0x53, 0x75, 0x70, 0x70,
-	0x6c, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x42, 0x15, 0xf2, 0xde, 0x1f, 0x11, 0x79, 0x61,
-	0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x61, 0x78, 0x5f, 0x73, 0x75, 0x70, 0x70, 0x6c, 0x79, 0x22, 0x52,
-	0x09, 0x6d, 0x61, 0x78, 0x53, 0x75, 0x70, 0x70, 0x6c, 0x79, 0x12, 0x58, 0x0a, 0x15, 0x64, 0x69,
-	0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x72, 0x74, 0x44,
-	0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x42, 0x22, 0xf2, 0xde, 0x1f, 0x1e, 0x79,
-	0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f,
-	0x6e, 0x5f, 0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x65, 0x22, 0x52, 0x15, 0x64,
-	0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x72, 0x74,
-	0x44, 0x61, 0x74, 0x65, 0x12, 0x59, 0x0a, 0x15, 0x6d, 0x6f, 0x6e, 0x74, 0x68, 0x73, 0x49, 0x6e,
-	0x48, 0x61, 0x6c, 0x76, 0x69, 0x6e, 0x67, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x18, 0x05, 0x20,
-	0x01, 0x28, 0x04, 0x42, 0x23, 0xf2, 0xde, 0x1f, 0x1f, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d,
-	0x6f, 0x6e, 0x74, 0x68, 0x73, 0x5f, 0x69, 0x6e, 0x5f, 0x68, 0x61, 0x6c, 0x76, 0x69, 0x6e, 0x67,
-	0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x22, 0x52, 0x15, 0x6d, 0x6f, 0x6e, 0x74, 0x68, 0x73,
-	0x49, 0x6e, 0x48, 0x61, 0x6c, 0x76, 0x69, 0x6e, 0x67, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x12,
-	0x6b, 0x0a, 0x1b, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x53,
-	0x69, 0x67, 0x6e, 0x65, 0x72, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x4b, 0x65, 0x79, 0x18, 0x06,
-	0x20, 0x01, 0x28, 0x09, 0x42, 0x29, 0xf2, 0xde, 0x1f, 0x25, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22,
-	0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x73, 0x69, 0x67,
-	0x6e, 0x65, 0x72, 0x5f, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x5f, 0x6b, 0x65, 0x79, 0x22, 0x52,
-	0x1b, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x69, 0x67,
-	0x6e, 0x65, 0x72, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x4b, 0x65, 0x79, 0x3a, 0x1e, 0xe8, 0xa0,
-	0x1f, 0x01, 0x8a, 0xe7, 0xb0, 0x2a, 0x15, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x78, 0x2f, 0x64,
-	0x69, 0x73, 0x74, 0x72, 0x6f, 0x2f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0xa1, 0x01, 0x0a,
-	0x10, 0x63, 0x6f, 0x6d, 0x2e, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2e, 0x64, 0x69, 0x73, 0x74, 0x72,
-	0x6f, 0x42, 0x0b, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01,
-	0x5a, 0x2f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x4f, 0x70, 0x74,
-	0x69, 0x6f, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f,
-	0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x64, 0x69, 0x73, 0x74, 0x72,
-	0x6f, 0xa2, 0x02, 0x03, 0x4f, 0x44, 0x58, 0xaa, 0x02, 0x0c, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x2e,
-	0x44, 0x69, 0x73, 0x74, 0x72, 0x6f, 0xca, 0x02, 0x0c, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x5c, 0x44,
-	0x69, 0x73, 0x74, 0x72, 0x6f, 0xe2, 0x02, 0x18, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x5c, 0x44, 0x69,
-	0x73, 0x74, 0x72, 0x6f, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61,
-	0xea, 0x02, 0x0d, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x3a, 0x3a, 0x44, 0x69, 0x73, 0x74, 0x72, 0x6f,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x6f, 0x22, 0xc8, 0x03, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x42, 0x0a,
+	0x0e, 0x6d, 0x69, 0x6e, 0x74, 0x69, 0x6e, 0x67, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x1a, 0xf2, 0xde, 0x1f, 0x16, 0x79, 0x61, 0x6d, 0x6c, 0x3a,
+	0x22, 0x6d, 0x69, 0x6e, 0x74, 0x69, 0x6e, 0x67, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
+	0x22, 0x52, 0x0e, 0x6d, 0x69, 0x6e, 0x74, 0x69, 0x6e, 0x67, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
+	0x73, 0x12, 0x48, 0x0a, 0x10, 0x72, 0x65, 0x63, 0x65, 0x69, 0x76, 0x69, 0x6e, 0x67, 0x41, 0x64,
+	0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x1c, 0xf2, 0xde, 0x1f,
+	0x18, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x72, 0x65, 0x63, 0x65, 0x69, 0x76, 0x69, 0x6e, 0x67,
+	0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x22, 0x52, 0x10, 0x72, 0x65, 0x63, 0x65, 0x69,
+	0x76, 0x69, 0x6e, 0x67, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x26, 0x0a, 0x05, 0x64,
+	0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x10, 0xf2, 0xde, 0x1f, 0x0c,
+	0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x22, 0x52, 0x05, 0x64, 0x65,
+	0x6e, 0x6f, 0x6d, 0x12, 0x33, 0x0a, 0x09, 0x6d, 0x61, 0x78, 0x53, 0x75, 0x70, 0x70, 0x6c, 0x79,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x04, 0x42, 0x15, 0xf2, 0xde, 0x1f, 0x11, 0x79, 0x61, 0x6d, 0x6c,
+	0x3a, 0x22, 0x6d, 0x61, 0x78, 0x5f, 0x73, 0x75, 0x70, 0x70, 0x6c, 0x79, 0x22, 0x52, 0x09, 0x6d,
+	0x61, 0x78, 0x53, 0x75, 0x70, 0x70, 0x6c, 0x79, 0x12, 0x58, 0x0a, 0x15, 0x64, 0x69, 0x73, 0x74,
+	0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x72, 0x74, 0x44, 0x61, 0x74,
+	0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x42, 0x22, 0xf2, 0xde, 0x1f, 0x1e, 0x79, 0x61, 0x6d,
+	0x6c, 0x3a, 0x22, 0x64, 0x69, 0x73, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x5f,
+	0x73, 0x74, 0x61, 0x72, 0x74, 0x5f, 0x64, 0x61, 0x74, 0x65, 0x22, 0x52, 0x15, 0x64, 0x69, 0x73,
+	0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x72, 0x74, 0x44, 0x61,
+	0x74, 0x65, 0x12, 0x59, 0x0a, 0x15, 0x6d, 0x6f, 0x6e, 0x74, 0x68, 0x73, 0x49, 0x6e, 0x48, 0x61,
+	0x6c, 0x76, 0x69, 0x6e, 0x67, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x18, 0x06, 0x20, 0x01, 0x28,
+	0x04, 0x42, 0x23, 0xf2, 0xde, 0x1f, 0x1f, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x6f, 0x6e,
+	0x74, 0x68, 0x73, 0x5f, 0x69, 0x6e, 0x5f, 0x68, 0x61, 0x6c, 0x76, 0x69, 0x6e, 0x67, 0x5f, 0x70,
+	0x65, 0x72, 0x69, 0x6f, 0x64, 0x22, 0x52, 0x15, 0x6d, 0x6f, 0x6e, 0x74, 0x68, 0x73, 0x49, 0x6e,
+	0x48, 0x61, 0x6c, 0x76, 0x69, 0x6e, 0x67, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x3a, 0x1e, 0xe8,
+	0xa0, 0x1f, 0x01, 0x8a, 0xe7, 0xb0, 0x2a, 0x15, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x78, 0x2f,
+	0x64, 0x69, 0x73, 0x74, 0x72, 0x6f, 0x2f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0xa1, 0x01,
+	0x0a, 0x10, 0x63, 0x6f, 0x6d, 0x2e, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2e, 0x64, 0x69, 0x73, 0x74,
+	0x72, 0x6f, 0x42, 0x0b, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50,
+	0x01, 0x5a, 0x2f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x4f, 0x70,
+	0x74, 0x69, 0x6f, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2f, 0x6f, 0x70, 0x74, 0x69,
+	0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x2f, 0x64, 0x69, 0x73, 0x74,
+	0x72, 0x6f, 0xa2, 0x02, 0x03, 0x4f, 0x44, 0x58, 0xaa, 0x02, 0x0c, 0x4f, 0x70, 0x74, 0x69, 0x6f,
+	0x2e, 0x44, 0x69, 0x73, 0x74, 0x72, 0x6f, 0xca, 0x02, 0x0c, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x5c,
+	0x44, 0x69, 0x73, 0x74, 0x72, 0x6f, 0xe2, 0x02, 0x18, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x5c, 0x44,
+	0x69, 0x73, 0x74, 0x72, 0x6f, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74,
+	0x61, 0xea, 0x02, 0x0d, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x3a, 0x3a, 0x44, 0x69, 0x73, 0x74, 0x72,
+	0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (

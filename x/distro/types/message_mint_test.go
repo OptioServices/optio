@@ -11,18 +11,18 @@ import (
 func TestMsgDistribute_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgDistribute
+		msg  MsgMint
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgDistribute{
+			msg: MsgMint{
 				FromAddress: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg: MsgDistribute{
+			msg: MsgMint{
 				FromAddress: sample.AccAddress(),
 			},
 		},

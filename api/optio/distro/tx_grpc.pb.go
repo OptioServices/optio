@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	Msg_UpdateParams_FullMethodName = "/optio.distro.Msg/UpdateParams"
-	Msg_Distribute_FullMethodName   = "/optio.distro.Msg/Distribute"
+	Msg_Mint_FullMethodName         = "/optio.distro.Msg/Mint"
 )
 
 // MsgClient is the client API for Msg service.
@@ -30,7 +30,7 @@ type MsgClient interface {
 	// UpdateParams defines a (governance) operation for updating the module
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
-	Distribute(ctx context.Context, in *MsgDistribute, opts ...grpc.CallOption) (*MsgDistributeResponse, error)
+	Mint(ctx context.Context, in *MsgMint, opts ...grpc.CallOption) (*MsgMintResponse, error)
 }
 
 type msgClient struct {
@@ -50,9 +50,9 @@ func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts 
 	return out, nil
 }
 
-func (c *msgClient) Distribute(ctx context.Context, in *MsgDistribute, opts ...grpc.CallOption) (*MsgDistributeResponse, error) {
-	out := new(MsgDistributeResponse)
-	err := c.cc.Invoke(ctx, Msg_Distribute_FullMethodName, in, out, opts...)
+func (c *msgClient) Mint(ctx context.Context, in *MsgMint, opts ...grpc.CallOption) (*MsgMintResponse, error) {
+	out := new(MsgMintResponse)
+	err := c.cc.Invoke(ctx, Msg_Mint_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ type MsgServer interface {
 	// UpdateParams defines a (governance) operation for updating the module
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
-	Distribute(context.Context, *MsgDistribute) (*MsgDistributeResponse, error)
+	Mint(context.Context, *MsgMint) (*MsgMintResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -77,8 +77,8 @@ type UnimplementedMsgServer struct {
 func (UnimplementedMsgServer) UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateParams not implemented")
 }
-func (UnimplementedMsgServer) Distribute(context.Context, *MsgDistribute) (*MsgDistributeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Distribute not implemented")
+func (UnimplementedMsgServer) Mint(context.Context, *MsgMint) (*MsgMintResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Mint not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 
@@ -111,20 +111,20 @@ func _Msg_UpdateParams_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_Distribute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgDistribute)
+func _Msg_Mint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgMint)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).Distribute(ctx, in)
+		return srv.(MsgServer).Mint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Msg_Distribute_FullMethodName,
+		FullMethod: Msg_Mint_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).Distribute(ctx, req.(*MsgDistribute))
+		return srv.(MsgServer).Mint(ctx, req.(*MsgMint))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -141,8 +141,8 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_UpdateParams_Handler,
 		},
 		{
-			MethodName: "Distribute",
-			Handler:    _Msg_Distribute_Handler,
+			MethodName: "Mint",
+			Handler:    _Msg_Mint_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

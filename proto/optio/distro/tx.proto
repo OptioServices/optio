@@ -7,7 +7,6 @@ import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "optio/distro/params.proto";
-import "optio/distro/recipient.proto";
 
 option go_package = "github.com/OptioServices/optio/x/distro/types";
 
@@ -18,7 +17,7 @@ service Msg {
   // UpdateParams defines a (governance) operation for updating the module
   // parameters. The authority defaults to the x/gov module account.
   rpc UpdateParams (MsgUpdateParams) returns (MsgUpdateParamsResponse);
-  rpc Distribute   (MsgDistribute  ) returns (MsgDistributeResponse  );
+  rpc Mint       (MsgMint        ) returns (MsgMintResponse        );
 }
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
@@ -38,14 +37,13 @@ message MsgUpdateParams {
 // MsgUpdateParams message.
 message MsgUpdateParamsResponse {}
 
-message MsgDistribute {
+message MsgMint {
   option (cosmos.msg.v1.signer) = "from_address";
-  option           (amino.name) = "optio/x/distro/MsgDistribute";
+  option           (amino.name) = "optio/x/distro/MsgMint";
 
   string from_address = 1;
   uint64 amount = 2;
-  repeated Recipient recipients = 3;
 }
 
-message MsgDistributeResponse {}
+message MsgMintResponse {}
 

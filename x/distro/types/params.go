@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -11,8 +10,13 @@ import (
 var _ paramtypes.ParamSet = (*Params)(nil)
 
 var (
-	KeyAuthorizedAccounts              = []byte("AuthorizedAccounts")
-	DefaultAuthorizedAccounts []string = []string{"optio13zj88zcylclhevtsztx0kdgf9a5zyskt4utffh"}
+	KeyMintingAddress            = []byte("MintingAddress")
+	DefaultMintingAddress string = "optio13zj88zcylclhevtsztx0kdgf9a5zyskt4utffh"
+)
+
+var (
+	KeyReceivingAddress            = []byte("ReceivingAddress")
+	DefaultReceivingAddress string = "optio13zj88zcylclhevtsztx0kdgf9a5zyskt4utffh"
 )
 
 var (
@@ -35,19 +39,6 @@ var (
 	DefaultMonthsInHalvingPeriod uint64 = 12
 )
 
-var (
-	KeyDistributionSignerPublicKey     = []byte("DistributionSignerPublicKey")
-	DefaultDistributionSignerPublicKey = `-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxQpapckgnO3A25SV1JFX
-75CatwQ3S0zhAwUTfnnWJAmQjki3NcmIiI5hVSMeDQXgEcUJgXaTtwe8wvrexOfD
-3YlWd0+ljJoeq2UqhZDtJZZ5F3PVVG2TJVWma3c5oQN9CtRswktrZxICKxIr4cgb
-CF3iahvaXDr2e8Tmr6RobL/oE3SgD0Xxp7xcKTra2mVSNMhc9xQhzdwvuUqYG+JK
-7+9trX0H8LyWcZiFzDH5nOJUVgHnvu68c7OCqYmku6NTG1iIzwwR+WggYiB/fb8R
-eSZp24q9+ckJ5h1dIP4EVRxx35dat9JqEvgGaWViL4EujHPfUR3VmQzxCeFXj+or
-bQIDAQAB
------END PUBLIC KEY-----`
-)
-
 // ParamKeyTable the param key table for launch module
 func ParamKeyTable() paramtypes.KeyTable {
 	return paramtypes.NewKeyTable().RegisterParamSet(&Params{})
@@ -55,49 +46,52 @@ func ParamKeyTable() paramtypes.KeyTable {
 
 // NewParams creates a new Params instance
 func NewParams(
-	authorizedAccounts []string,
+	mintingAddress string,
+	receivingAddress string,
 	denom string,
 	maxSupply uint64,
 	distributionStartDate string,
 	monthsInHalvingPeriod uint64,
-	distributionSignerPublicKey string,
 ) Params {
 	return Params{
-		AuthorizedAccounts:          authorizedAccounts,
-		Denom:                       denom,
-		MaxSupply:                   maxSupply,
-		DistributionStartDate:       distributionStartDate,
-		MonthsInHalvingPeriod:       monthsInHalvingPeriod,
-		DistributionSignerPublicKey: distributionSignerPublicKey,
+		MintingAddress:        mintingAddress,
+		ReceivingAddress:      receivingAddress,
+		Denom:                 denom,
+		MaxSupply:             maxSupply,
+		DistributionStartDate: distributionStartDate,
+		MonthsInHalvingPeriod: monthsInHalvingPeriod,
 	}
 }
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
 	return NewParams(
-		DefaultAuthorizedAccounts,
+		DefaultMintingAddress,
+		DefaultReceivingAddress,
 		DefaultDenom,
 		DefaultMaxSupply,
 		DefaultDistributionStartDate,
 		DefaultMonthsInHalvingPeriod,
-		DefaultDistributionSignerPublicKey,
 	)
 }
 
 // ParamSetPairs get the params.ParamSet
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyAuthorizedAccounts, &p.AuthorizedAccounts, validateAuthorizedAccounts),
+		paramtypes.NewParamSetPair(KeyMintingAddress, &p.MintingAddress, validateMintingAddress),
+		paramtypes.NewParamSetPair(KeyReceivingAddress, &p.ReceivingAddress, validateReceivingAddress),
 		paramtypes.NewParamSetPair(KeyDenom, &p.Denom, validateDenom),
 		paramtypes.NewParamSetPair(KeyMaxSupply, &p.MaxSupply, validateMaxSupply),
-		paramtypes.NewParamSetPair(KeyDistributionStartDate, &p.DistributionStartDate, validateDistributionStartDate),
-		paramtypes.NewParamSetPair(KeyMonthsInHalvingPeriod, &p.MonthsInHalvingPeriod, validateMonthsInHalvingPeriod),
 	}
 }
 
 // Validate validates the set of params
 func (p Params) Validate() error {
-	if err := validateAuthorizedAccounts(p.AuthorizedAccounts); err != nil {
+	if err := validateMintingAddress(p.MintingAddress); err != nil {
+		return err
+	}
+
+	if err := validateReceivingAddress(p.ReceivingAddress); err != nil {
 		return err
 	}
 
@@ -109,33 +103,34 @@ func (p Params) Validate() error {
 		return err
 	}
 
-	if err := validateDistributionStartDate(p.DistributionStartDate); err != nil {
-		return err
-	}
-
-	if err := validateMonthsInHalvingPeriod(p.MonthsInHalvingPeriod); err != nil {
-		return err
-	}
-
 	return nil
 }
 
-// validateAuthorizedAccounts validates the AuthorizedAccounts param
-func validateAuthorizedAccounts(v interface{}) error {
-	authorizedAccounts, ok := v.([]string)
+// validateMintingAddress validates the MintingAddress param
+func validateMintingAddress(v interface{}) error {
+	mintingAddress, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
 
-	if len(authorizedAccounts) != 0 {
-		for _, account := range authorizedAccounts {
-			_, err := sdk.AccAddressFromBech32(account)
-			if err != nil {
-				return fmt.Errorf("invalid account address: %s", account)
-			}
-		}
+	_, err := sdk.AccAddressFromBech32(mintingAddress)
+	if err != nil {
+		return fmt.Errorf("invalid account address: %s", mintingAddress)
+	}
+	return nil
+}
+
+// validateReceivingAddress validates the ReceivingAddress param
+func validateReceivingAddress(v interface{}) error {
+	receivingAddress, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
 	}
 
+	_, err := sdk.AccAddressFromBech32(receivingAddress)
+	if err != nil {
+		return fmt.Errorf("invalid account address: %s", receivingAddress)
+	}
 	return nil
 }
 
@@ -162,36 +157,6 @@ func validateMaxSupply(v interface{}) error {
 
 	if maxSupply <= 0 {
 		return fmt.Errorf("max supply must be positive")
-	}
-
-	return nil
-}
-
-func validateDistributionStartDate(v interface{}) error {
-	distributionStartDate, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", v)
-	}
-
-	if distributionStartDate == "" {
-		return fmt.Errorf("distribution start date cannot be empty")
-	}
-
-	if _, err := time.Parse("2006-01-02", distributionStartDate); err != nil {
-		return fmt.Errorf("invalid distribution start date format; expected yyyy-mm-dd, got %s", distributionStartDate)
-	}
-
-	return nil
-}
-
-func validateMonthsInHalvingPeriod(v interface{}) error {
-	monthsInHalvingPeriod, ok := v.(uint64)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", v)
-	}
-
-	if monthsInHalvingPeriod <= 0 {
-		return fmt.Errorf("months in halving period must be positive")
 	}
 
 	return nil

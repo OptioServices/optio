@@ -11,10 +11,10 @@ message Params {
   option (amino.name) = "optio/x/distro/Params";
   option (gogoproto.equal) = true;
   
-  repeated string authorizedAccounts = 1 [(gogoproto.moretags) = "yaml:\"authorized_accounts\""];
-  string denom = 2 [(gogoproto.moretags) = "yaml:\"denom\""];
-  uint64 maxSupply = 3 [(gogoproto.moretags) = "yaml:\"max_supply\""];
-  string distributionStartDate = 4 [(gogoproto.moretags) = "yaml:\"distribution_start_date\""];
-  uint64 monthsInHalvingPeriod = 5 [(gogoproto.moretags) = "yaml:\"months_in_halving_period\""];
-  string distributionSignerPublicKey = 6 [(gogoproto.moretags) = "yaml:\"distribution_signer_public_key\""];
+  string mintingAddress = 1 [(gogoproto.moretags) = "yaml:\"minting_address\""];
+  string receivingAddress = 2 [(gogoproto.moretags) = "yaml:\"receiving_address\""];
+  string denom = 3 [(gogoproto.moretags) = "yaml:\"denom\""];
+  uint64 maxSupply = 4 [(gogoproto.moretags) = "yaml:\"max_supply\""];
+  string distributionStartDate = 5 [(gogoproto.moretags) = "yaml:\"distribution_start_date\""];
+  uint64 monthsInHalvingPeriod = 6 [(gogoproto.moretags) = "yaml:\"months_in_halving_period\""];
 }

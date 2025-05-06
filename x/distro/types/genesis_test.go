@@ -18,28 +18,6 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: types.DefaultGenesis(),
 			valid:    true,
 		},
-		{
-			desc: "valid genesis state",
-			genState: &types.GenesisState{
-
-				DistributedTotals: map[string]uint64{
-					"0": 0,
-					"1": 1,
-				},
-				// this line is used by starport scaffolding # types/genesis/validField
-			},
-			valid: true,
-		},
-		{
-			desc: "duplicated dailyDistributionTotal",
-			genState: &types.GenesisState{
-				DistributedTotals: map[string]uint64{
-					"0": 0,
-					"1": 1,
-				},
-			},
-			valid: false,
-		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	}
 	for _, tc := range tests {

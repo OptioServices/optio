@@ -9,7 +9,7 @@ import (
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgDistribute{},
+		&MsgMint{},
 		&MsgUpdateParams{},
 	)
 	// this line is used by starport scaffolding # 3
