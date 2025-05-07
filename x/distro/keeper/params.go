@@ -33,7 +33,7 @@ func (k Keeper) SetParams(ctx context.Context, params types.Params) error {
 }
 
 // IsAuthorized checks if the sender is authorized
-func (k Keeper) IsAuthorized(ctx context.Context, sender string) bool {
+func (k Keeper) IsAuthorized(ctx context.Context, fromAddress string) bool {
 	params := k.GetParams(ctx)
-	return params.MintingAddress == sender
+	return params.MintingAddress == fromAddress
 }

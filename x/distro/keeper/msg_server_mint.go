@@ -14,8 +14,14 @@ import (
 func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMintResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.IsAuthorized(ctx, msg.FromAddress) {
-		return nil, errorsmod.Wrapf(sdkerrors.ErrUnauthorized, "Unauthorized sender")
+	signer := msg.GetSigner()
+
+	if len(signer) == 0 {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "signer is required")
+	}
+
+	if !k.IsAuthorized(ctx, signer) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "unauthorized sender")
 	}
 
 	params := k.GetParams(ctx)
@@ -30,9 +36,9 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, err
 	}
 
-	moduleAddr := k.accountKeeper.GetModuleAddress(types.ModuleName)
-	moduleBalance := math.NewUint(k.viewKeeper.GetBalance(ctx, moduleAddr, params.Denom).Amount.Uint64())
-	if err := k.mintIfNeeded(ctx, moduleBalance, msgAmount, params.Denom); err != nil {
+	coins := sdk.NewCoins(sdk.NewCoin(params.Denom, math.NewIntFromUint64(msgAmount.Uint64())))
+	err := k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
+	if err != nil {
 		return nil, err
 	}
 
@@ -45,15 +51,6 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 
 func parseDate(dateStr string) (time.Time, error) {
 	return time.Parse("2006-01-02", dateStr)
-}
-
-func (k msgServer) mintIfNeeded(ctx context.Context, balance, amount math.Uint, denom string) error {
-	if balance.LT(amount) {
-		toMint := amount.Sub(balance)
-		coins := sdk.NewCoins(sdk.NewCoin(denom, math.NewIntFromUint64(toMint.Uint64())))
-		return k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
-	}
-	return nil
 }
 
 func (k msgServer) distributeCoins(ctx context.Context, toAddress string, amount uint64, denom string) error {

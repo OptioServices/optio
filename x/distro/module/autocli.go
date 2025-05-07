@@ -17,17 +17,6 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:       "params",
 					Short:     "Shows the parameters of the module",
 				},
-				{
-					RpcMethod: "DailyDistributionTotalAll",
-					Use:       "list-daily-distribution-total",
-					Short:     "List all daily-distribution-total",
-				},
-				{
-					RpcMethod:      "DailyDistributionTotal",
-					Use:            "show-daily-distribution-total [id]",
-					Short:          "Shows a daily-distribution-total",
-					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "date"}},
-				},
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},
@@ -40,10 +29,10 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Skip:      true, // skipped because authority gated
 				},
 				{
-					RpcMethod:      "Distribute",
-					Use:            "distribute [amount] [recipients]",
-					Short:          "Send a Distribute tx",
-					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "amount"}, {ProtoField: "recipients"}},
+					RpcMethod:      "Mint",
+					Use:            "mint [amount]",
+					Short:          "Send a Mint tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "amount"}},
 				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},

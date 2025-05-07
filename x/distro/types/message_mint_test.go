@@ -3,7 +3,6 @@ package types
 import (
 	"testing"
 
-	"github.com/OptioServices/optio/testutil/sample"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 )
@@ -15,15 +14,15 @@ func TestMsgDistribute_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
+			name: "invalid amount",
 			msg: MsgMint{
-				FromAddress: "invalid_address",
+				Amount: 0,
 			},
-			err: sdkerrors.ErrInvalidAddress,
+			err: sdkerrors.ErrInvalidRequest,
 		}, {
-			name: "valid address",
+			name: "valid amount",
 			msg: MsgMint{
-				FromAddress: sample.AccAddress(),
+				Amount: 1000000,
 			},
 		},
 	}

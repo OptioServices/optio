@@ -38,10 +38,10 @@ message MsgUpdateParams {
 message MsgUpdateParamsResponse {}
 
 message MsgMint {
-  option (cosmos.msg.v1.signer) = "from_address";
+  option (cosmos.msg.v1.signer) = "signer";
   option           (amino.name) = "optio/x/distro/MsgMint";
 
-  string from_address = 1;
+  string signer = 1;
   uint64 amount = 2;
 }
 
