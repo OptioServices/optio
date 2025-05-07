@@ -873,15 +873,15 @@ func (x *fastReflection_MsgUpdateParamsResponse) ProtoMethods() *protoiface.Meth
 
 var (
 	md_MsgMint        protoreflect.MessageDescriptor
-	fd_MsgMint_signer protoreflect.FieldDescriptor
 	fd_MsgMint_amount protoreflect.FieldDescriptor
+	fd_MsgMint_signer protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_optio_distro_tx_proto_init()
 	md_MsgMint = File_optio_distro_tx_proto.Messages().ByName("MsgMint")
-	fd_MsgMint_signer = md_MsgMint.Fields().ByName("signer")
 	fd_MsgMint_amount = md_MsgMint.Fields().ByName("amount")
+	fd_MsgMint_signer = md_MsgMint.Fields().ByName("signer")
 }
 
 var _ protoreflect.Message = (*fastReflection_MsgMint)(nil)
@@ -949,15 +949,15 @@ func (x *fastReflection_MsgMint) Interface() protoreflect.ProtoMessage {
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_MsgMint) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if x.Signer != "" {
-		value := protoreflect.ValueOfString(x.Signer)
-		if !f(fd_MsgMint_signer, value) {
-			return
-		}
-	}
 	if x.Amount != uint64(0) {
 		value := protoreflect.ValueOfUint64(x.Amount)
 		if !f(fd_MsgMint_amount, value) {
+			return
+		}
+	}
+	if x.Signer != "" {
+		value := protoreflect.ValueOfString(x.Signer)
+		if !f(fd_MsgMint_signer, value) {
 			return
 		}
 	}
@@ -976,10 +976,10 @@ func (x *fastReflection_MsgMint) Range(f func(protoreflect.FieldDescriptor, prot
 // a repeated field is populated if it is non-empty.
 func (x *fastReflection_MsgMint) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "optio.distro.MsgMint.signer":
-		return x.Signer != ""
 	case "optio.distro.MsgMint.amount":
 		return x.Amount != uint64(0)
+	case "optio.distro.MsgMint.signer":
+		return x.Signer != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.MsgMint"))
@@ -996,10 +996,10 @@ func (x *fastReflection_MsgMint) Has(fd protoreflect.FieldDescriptor) bool {
 // Clear is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_MsgMint) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "optio.distro.MsgMint.signer":
-		x.Signer = ""
 	case "optio.distro.MsgMint.amount":
 		x.Amount = uint64(0)
+	case "optio.distro.MsgMint.signer":
+		x.Signer = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.MsgMint"))
@@ -1016,12 +1016,12 @@ func (x *fastReflection_MsgMint) Clear(fd protoreflect.FieldDescriptor) {
 // of the value; to obtain a mutable reference, use Mutable.
 func (x *fastReflection_MsgMint) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "optio.distro.MsgMint.signer":
-		value := x.Signer
-		return protoreflect.ValueOfString(value)
 	case "optio.distro.MsgMint.amount":
 		value := x.Amount
 		return protoreflect.ValueOfUint64(value)
+	case "optio.distro.MsgMint.signer":
+		value := x.Signer
+		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.MsgMint"))
@@ -1042,10 +1042,10 @@ func (x *fastReflection_MsgMint) Get(descriptor protoreflect.FieldDescriptor) pr
 // Set is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_MsgMint) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "optio.distro.MsgMint.signer":
-		x.Signer = value.Interface().(string)
 	case "optio.distro.MsgMint.amount":
 		x.Amount = value.Uint()
+	case "optio.distro.MsgMint.signer":
+		x.Signer = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.MsgMint"))
@@ -1066,10 +1066,10 @@ func (x *fastReflection_MsgMint) Set(fd protoreflect.FieldDescriptor, value prot
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_MsgMint) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "optio.distro.MsgMint.signer":
-		panic(fmt.Errorf("field signer of message optio.distro.MsgMint is not mutable"))
 	case "optio.distro.MsgMint.amount":
 		panic(fmt.Errorf("field amount of message optio.distro.MsgMint is not mutable"))
+	case "optio.distro.MsgMint.signer":
+		panic(fmt.Errorf("field signer of message optio.distro.MsgMint is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.MsgMint"))
@@ -1083,10 +1083,10 @@ func (x *fastReflection_MsgMint) Mutable(fd protoreflect.FieldDescriptor) protor
 // For lists, maps, and messages, this returns a new, empty, mutable value.
 func (x *fastReflection_MsgMint) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "optio.distro.MsgMint.signer":
-		return protoreflect.ValueOfString("")
 	case "optio.distro.MsgMint.amount":
 		return protoreflect.ValueOfUint64(uint64(0))
+	case "optio.distro.MsgMint.signer":
+		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: optio.distro.MsgMint"))
@@ -1156,12 +1156,12 @@ func (x *fastReflection_MsgMint) ProtoMethods() *protoiface.Methods {
 		var n int
 		var l int
 		_ = l
+		if x.Amount != 0 {
+			n += 1 + runtime.Sov(uint64(x.Amount))
+		}
 		l = len(x.Signer)
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
-		}
-		if x.Amount != 0 {
-			n += 1 + runtime.Sov(uint64(x.Amount))
 		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
@@ -1192,17 +1192,17 @@ func (x *fastReflection_MsgMint) ProtoMethods() *protoiface.Methods {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
-		if x.Amount != 0 {
-			i = runtime.EncodeVarint(dAtA, i, uint64(x.Amount))
-			i--
-			dAtA[i] = 0x10
-		}
 		if len(x.Signer) > 0 {
 			i -= len(x.Signer)
 			copy(dAtA[i:], x.Signer)
 			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Signer)))
 			i--
-			dAtA[i] = 0xa
+			dAtA[i] = 0x12
+		}
+		if x.Amount != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.Amount))
+			i--
+			dAtA[i] = 0x8
 		}
 		if input.Buf != nil {
 			input.Buf = append(input.Buf, dAtA...)
@@ -1254,6 +1254,25 @@ func (x *fastReflection_MsgMint) ProtoMethods() *protoiface.Methods {
 			}
 			switch fieldNum {
 			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
+				}
+				x.Amount = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.Amount |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 2:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
 				}
@@ -1285,25 +1304,6 @@ func (x *fastReflection_MsgMint) ProtoMethods() *protoiface.Methods {
 				}
 				x.Signer = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
-			case 2:
-				if wireType != 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
-				}
-				x.Amount = 0
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					x.Amount |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -1787,8 +1787,8 @@ type MsgMint struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
-	Amount uint64 `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	Amount uint64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
+	Signer string `protobuf:"bytes,2,opt,name=signer,proto3" json:"signer,omitempty"`
 }
 
 func (x *MsgMint) Reset() {
@@ -1811,18 +1811,18 @@ func (*MsgMint) Descriptor() ([]byte, []int) {
 	return file_optio_distro_tx_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *MsgMint) GetSigner() string {
-	if x != nil {
-		return x.Signer
-	}
-	return ""
-}
-
 func (x *MsgMint) GetAmount() uint64 {
 	if x != nil {
 		return x.Amount
 	}
 	return 0
+}
+
+func (x *MsgMint) GetSigner() string {
+	if x != nil {
+		return x.Signer
+	}
+	return ""
 }
 
 type MsgMintResponse struct {
@@ -1877,10 +1877,10 @@ var file_optio_distro_tx_proto_rawDesc = []byte{
 	0x69, 0x73, 0x74, 0x72, 0x6f, 0x2f, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50,
 	0x61, 0x72, 0x61, 0x6d, 0x73, 0x22, 0x19, 0x0a, 0x17, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61,
 	0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x22, 0x61, 0x0a, 0x07, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x73,
-	0x69, 0x67, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x69, 0x67,
-	0x6e, 0x65, 0x72, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x04, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x3a, 0x26, 0x82, 0xe7, 0xb0,
+	0x22, 0x61, 0x0a, 0x07, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x61,
+	0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x61, 0x6d, 0x6f,
+	0x75, 0x6e, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x3a, 0x26, 0x82, 0xe7, 0xb0,
 	0x2a, 0x06, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x72, 0x8a, 0xe7, 0xb0, 0x2a, 0x16, 0x6f, 0x70, 0x74,
 	0x69, 0x6f, 0x2f, 0x78, 0x2f, 0x64, 0x69, 0x73, 0x74, 0x72, 0x6f, 0x2f, 0x4d, 0x73, 0x67, 0x4d,
 	0x69, 0x6e, 0x74, 0x22, 0x11, 0x0a, 0x0f, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x52, 0x65,

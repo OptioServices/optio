@@ -41,8 +41,8 @@ message MsgMint {
   option (cosmos.msg.v1.signer) = "signer";
   option           (amino.name) = "optio/x/distro/MsgMint";
 
-  string signer = 1;
-  uint64 amount = 2;
+  uint64 amount = 1;
+  string signer = 2;
 }
 
 message MsgMintResponse {}
